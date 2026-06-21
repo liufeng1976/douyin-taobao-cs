@@ -1,0 +1,22 @@
+{
+  "name": "douyin-taobao-cs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI 自动客服系统 — 同时对接抖音电商 & 淘宝/千牛",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "test": "node tests/e2e.test.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "axios": "^1.7.0",
+    "crypto-js": "^4.2.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0"
+  }
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 客服管理面板 — 抖音 & 淘宝</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #2d3436; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 2rem; }
+    .header h1 { font-size: 1.5rem; }
+    .header p { opacity: 0.85; margin-top: 0.25rem; font-size: 0.9rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem 2rem; }
+    .stat-card { background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .stat-card .label { font-size: 0.8rem; color: #636e72; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 2rem; font-weight: 700; margin-top: 0.25rem; color: #2d3436; }
+    .stat-card.douyin .value { color: #fe2c55; }
+    .stat-card.taobao .value { color: #ff5000; }
+    .container { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; padding: 0 2rem 2rem; }
+    .chat-panel, .kb-panel { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .chat-panel h2, .kb-panel h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .messages { max-height: 400px; overflow-y: auto; margin-bottom: 1rem; }
+    .msg { padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 0.75rem; max-width: 80%; }
+    .msg.user { background: #667eea; color: white; margin-left: auto; }
+    .msg.bot { background: #f1f2f6; }
+    .msg .meta { font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.25rem; }
+    .input-row { display: flex; gap: 0.5rem; }
+    .input-row input { flex: 1; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; outline: none; }
+    .input-row input:focus { border-color: #667eea; }
+    .input-row button { padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .input-row button:hover { background: #5a6fd6; }
+    .input-row select { padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; outline: none; }
+    .faq-list { list-style: none; }
+    .faq-item { padding: 0.75rem; border-bottom: 1px solid #f1f2f6; display: flex; justify-content: space-between; align-items: center; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item .q { font-weight: 600; font-size: 0.9rem; }
+    .faq-item .a { font-size: 0.8rem; color: #636e72; margin-top: 0.2rem; }
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+    .badge.douyin { background: #ffe0e6; color: #fe2c55; }
+    .badge.taobao { background: #ffe8d6; color: #ff5000; }
+    .add-faq { margin-top: 1rem; display: flex; gap: 0.5rem; flex-direction: column; }
+    .add-faq input { padding: 0.5rem; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.85rem; }
+    .add-faq button { padding: 0.5rem; background: #00b894; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🤖 AI 客服管理面板</h1>
+    <p>同时管理抖音电商 &amp; 淘宝/千牛 — 智能自动回复 · 多平台统一后台</p>
+  </div>
+  <div class="stats">
+    <div class="stat-card douyin"><div class="label">📱 抖音 · 今日消息</div><div class="value" id="douyin-count">--</div></div>
+    <div class="stat-card taobao"><div class="label">🛒 淘宝 · 今日消息</div><div class="value" id="taobao-count">--</div></div>
+    <div class="stat-card"><div class="label">⚡ AI 自动回复率</div><div class="value" style="color:#00b894" id="auto-rate">--</div></div>
+    <div class="stat-card"><div class="label">⏱ 平均响应时间</div><div class="value" id="avg-time">--</div></div>
+  </div>
+  <div class="container">
+    <div class="chat-panel">
+      <h2>💬 AI 对话测试</h2>
+      <div class="messages" id="messages">
+        <div class="msg bot"><div class="meta">🤖 AI 客服</div>您好！我是AI客服助手，有什么可以帮您的？ 😊</div>
+      </div>
+      <div class="input-row">
+        <select id="platform-select"><option value="douyin">📱 抖音</option><option value="taobao">🛒 淘宝</option></select>
+        <input type="text" id="user-input" placeholder="模拟客户问题...">
+        <button id="send-btn">发送</button>
+      </div>
+    </div>
+    <div class="kb-panel">
+      <h2>📚 知识库管理</h2>
+      <ul class="faq-list" id="faq-list"><li class="faq-item" style="color:#636e72">加载中...</li></ul>
+      <div class="add-faq">
+        <input type="text" id="new-question" placeholder="问题 (如: 什么时候发货)">
+        <input type="text" id="new-answer" placeholder="答案">
+        <button id="add-faq-btn">+ 添加 FAQ</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
