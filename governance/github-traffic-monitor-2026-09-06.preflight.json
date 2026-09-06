@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 3,
+  "project": "douyin-taobao-cs",
+  "batch": "github-traffic-monitor-2026-09-06",
+  "highestCommercialGoal": "Measure whether the public connector repository creates qualified BossAI discovery and trial interest without inventing growth claims.",
+  "largestUserGap": "The repository had real GitHub traffic but no durable snapshot comparison or low-friction feedback loop on the latest main branch.",
+  "userProblem": "The owner cannot reliably distinguish real traffic, clone, community and referrer changes from anecdotal observations or rolling-window noise.",
+  "userVisibleChange": "Repository visitors receive a shorter Community Demo feedback form, while the owner can run read-only GitHub traffic reports, save snapshots, compare arbitrary snapshots and optionally install a local daily collector.",
+  "scope": [
+    "restore the 2026-09-06 governed GitHub traffic baseline onto latest main",
+    "read-only views/clones/referrers/popular-paths reporting",
+    "stars/forks/open-issues point-in-time reporting",
+    "arbitrary snapshot comparison",
+    "actionable signals for first issue, stars/forks growth and new external referrers",
+    "one-minute Community Demo feedback form",
+    "optional Windows local scheduled snapshot collector using existing gh authentication"
+  ],
+  "outOfScope": [
+    "claiming the optimization caused traffic or revenue growth",
+    "publishing or posting to external communities",
+    "creating GitHub Issues automatically",
+    "storing GitHub PATs or marketplace credentials",
+    "changing v1.0.0 or v1.1.0 tags/releases",
+    "automatic marketplace messaging, refunds, orders or account mutations"
+  ],
+  "capabilityClassification": "read-only-growth-analytics-tooling",
+  "realEntryAcceptance": [
+    "baseline compared to itself produces zero deltas",
+    "current authenticated GitHub traffic report executes successfully",
+    "report distinguishes rolling 14-day traffic windows from cumulative community counts",
+    "setup-github-traffic-monitor.ps1 PreflightOnly validates without creating a scheduled task",
+    "npm run check passes",
+    "npm run verify:public-release passes",
+    "git diff --check passes"
+  ],
+  "machineChecks": [
+    "npm run growth:traffic:compare -- governance/github-traffic-baseline-2026-09-06.json governance/github-traffic-baseline-2026-09-06.json",
+    "npm run growth:traffic",
+    "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-github-traffic-monitor.ps1 -Confirmation INSTALL_BOSSAI_GITHUB_TRAFFIC_MONITOR -PreflightOnly",
+    "npm run check",
+    "git diff --check"
+  ],
+  "targetCompletionLevel": 2,
+  "completionClaim": "L2 repository growth-measurement tooling ready for review/merge; daily Windows task remains opt-in and was not installed during this batch."
+}

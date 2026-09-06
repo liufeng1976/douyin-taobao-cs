@@ -1,99 +1,50 @@
 name: Community Demo feedback / Community Demo 反馈
-description: Share your API-free demo result and integration needs without posting platform credentials or customer data. / 反馈 API-free Demo 结果和集成需求，请勿提交平台凭据或客户数据。
+description: Share your API-free demo result or integration need in about one minute. Never post platform credentials or customer data. / 用约 1 分钟反馈 API-free Demo 或集成需求，请勿提交平台凭据或客户数据。
 title: "[Demo] "
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for evaluating the BossAI domestic ecommerce customer-service connector reference.
+        Thanks for trying the BossAI Douyin/Taobao customer-service connector reference.
 
-        The current hardened path is designed to run without real Douyin/Taobao APIs. Real production platform validation is a separate future step.
+        **This form is intentionally short.** A real production-platform validation is a separate step; you do not need Douyin/Taobao credentials to submit feedback.
 
-        Never post App Keys, App Secrets, access tokens, session keys, cookies, customer conversations, order data, phone numbers, addresses, private logs, or other sensitive/private information.
+        Never post App Keys, App Secrets, access tokens, session keys, cookies, customer conversations, order/customer data, phone numbers, addresses, private logs, or other sensitive/private information.
 
-        感谢试用 BossAI 国内电商客服 Connector Reference。当前硬化版本无需真实抖音/淘宝 API 即可运行；真实生产平台验收属于后续独立步骤。
+        感谢试用 BossAI 抖音 / 淘宝客服 Connector Reference。**这个反馈表刻意保持简短。** 无需抖音/淘宝凭据即可提交；真实生产平台验收属于后续独立步骤。
 
-        请勿提交 App Key、App Secret、Access Token、Session Key、Cookie、客户对话、订单数据、手机号、地址、私有日志或其他敏感/隐私信息。
+        请勿提交 App Key、App Secret、Access Token、Session Key、Cookie、客户对话、订单/客户数据、手机号、地址、私有日志或其他敏感/隐私信息。
 
   - type: dropdown
     id: local_demo
     attributes:
       label: API-free demo result / API-free Demo 结果
       options:
-        - Synthetic signatures verified and demo passed / 模拟签名验证通过且 Demo PASS
-        - Demo ran but one step failed / Demo 可运行但有步骤失败
+        - Demo passed / Demo 已通过
+        - Demo ran but something failed / Demo 可运行但有步骤失败
         - Installation or startup failed / 安装或启动失败
-        - Not tested yet / 尚未测试
-    validations:
-      required: true
-
-  - type: dropdown
-    id: draft_mode
-    attributes:
-      label: Draft mode tested / 草稿模式
-      options:
-        - Local safety fallback without BossAI OS key / 无 BossAI OS Key 的本地安全 fallback
-        - BossAI OS bounded draft with my authorized customer key / 使用我自己的 BossAI OS 客户级 Key
-        - Both / 两者都测试了
-        - Not sure / 不确定
+        - I have not run it yet; I have an integration question / 尚未运行，我有集成问题
     validations:
       required: true
 
   - type: checkboxes
     id: interests
     attributes:
-      label: Which areas matter to you? / 你最关注哪些方向？
+      label: What matters to you? / 你最关注什么？
       options:
         - label: Douyin ecommerce customer service / 抖音电商客服
         - label: Taobao / Tmall / Qianniu customer service / 淘宝 / 天猫 / 千牛客服
         - label: Signed webhook compatibility / Webhook 签名兼容
-        - label: Human review and safety policy / 人工审核与安全策略
-        - label: Canonical BossAI Customer Service intake / BossAI 统一客服 Intake
+        - label: Human review / safe AI drafts / 人工审核与安全 AI 草稿
+        - label: BossAI Customer Service integration / BossAI 统一客服接入
         - label: Ecommerce operations beyond customer service / 客服之外的电商运营
-        - label: Market/opportunity research / 市场与商机研究
-        - label: Video/content production / 视频与内容生产
-
-  - type: dropdown
-    id: platform_access
-    attributes:
-      label: Do you already have legitimate current platform API access? / 你是否已经取得当前合法的平台 API 权限？
-      description: Do not paste credentials. This asks only whether access exists. / 这里只询问是否具备权限，请勿粘贴凭据。
-      options:
-        - Douyin access / 已有抖音权限
-        - Taobao / Tmall / Qianniu access / 已有淘宝 / 天猫 / 千牛权限
-        - Both / 两者都有
-        - No / 暂无
-        - Applying / 申请中
-        - Not sure / 不确定
-    validations:
-      required: true
 
   - type: textarea
-    id: worked
+    id: need
     attributes:
-      label: What worked? / 哪些功能正常？
-      description: Describe the furthest successful step using non-sensitive information only. / 只用非敏感信息说明最远成功到哪一步。
-    validations:
-      required: true
-
-  - type: textarea
-    id: blocker
-    attributes:
-      label: What blocked you? / 什么阻塞了你？
-      description: Include reproducible steps and public-safe error text. Remove credentials and customer data. / 可填写复现步骤和可公开错误信息，请删除凭据和客户数据。
-
-  - type: dropdown
-    id: next_step
-    attributes:
-      label: Most useful next step / 对你最有价值的下一步
-      options:
-        - Improve the API-free connector reference / 完善 API-free Connector Reference
-        - Validate a real Douyin integration after authorized credentials are available / 有合法权限后验证真实抖音接入
-        - Validate a real Taobao/Tmall/Qianniu integration after authorized credentials are available / 有合法权限后验证真实淘宝/天猫/千牛接入
-        - Continue into BossAI Ecommerce Manager / 转到 BossAI Ecommerce Manager
-        - Continue into BossAI Radar Lite / 转到 BossAI Radar Lite
-        - Continue into BossAI Video Agent / 转到 BossAI Video Agent
-        - Other / 其他
+      label: What do you want to solve, or what blocked you? / 你想解决什么，或者哪里卡住了？
+      description: A short sentence is enough. Include only public-safe error text or requirements. / 一两句话即可，只填写可公开的错误信息或需求。
+      placeholder: "Example: npm run demo passed; I want to understand how to connect a real Qianniu webhook later. / 例如：Demo 已通过，后续想了解如何接入真实千牛 webhook。"
     validations:
       required: true
 
@@ -110,6 +61,19 @@ body:
         - Not sure yet / 暂不确定
     validations:
       required: true
+
+  - type: dropdown
+    id: platform_access
+    attributes:
+      label: Optional: current legitimate platform API access / 可选：当前是否已有合法平台 API 权限
+      description: Do not paste credentials. / 请勿粘贴任何凭据。
+      options:
+        - Douyin access / 已有抖音权限
+        - Taobao / Tmall / Qianniu access / 已有淘宝 / 天猫 / 千牛权限
+        - Both / 两者都有
+        - Applying / 申请中
+        - No / 暂无
+        - Not sure / 不确定
 
   - type: checkboxes
     id: safety

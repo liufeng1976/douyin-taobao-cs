@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "project": "douyin-taobao-cs",
+  "capturedAt": "2026-09-06T08:10:00Z",
+  "window": "GitHub repository traffic API rolling 14 days",
+  "traffic": {
+    "views": 203,
+    "uniqueVisitors": 106,
+    "clones": 30,
+    "uniqueCloners": 26
+  },
+  "community": {
+    "stars": 20,
+    "forks": 5,
+    "openIssues": 0
+  },
+  "topReferrers": [
+    {"referrer": "github.com", "count": 171, "uniques": 87},
+    {"referrer": "Bing", "count": 6, "uniques": 1},
+    {"referrer": "chatgpt.com", "count": 1, "uniques": 1}
+  ],
+  "popularPaths": [
+    {"path": "/liufeng1976/douyin-taobao-cs", "count": 145, "uniques": 104},
+    {"path": "/liufeng1976/douyin-taobao-cs/tree/main", "count": 14, "uniques": 5},
+    {"path": "/liufeng1976/douyin-taobao-cs/tree/main/backend", "count": 9, "uniques": 6},
+    {"path": "/liufeng1976/douyin-taobao-cs/tree/main/backend/adapters", "count": 7, "uniques": 5},
+    {"path": "/liufeng1976/douyin-taobao-cs/blob/main/backend/adapters/taobao.js", "count": 5, "uniques": 4},
+    {"path": "/liufeng1976/douyin-taobao-cs/issues", "count": 4, "uniques": 3},
+    {"path": "/liufeng1976/douyin-taobao-cs/blob/main/backend/adapters/douyin.js", "count": 2, "uniques": 1}
+  ],
+  "interpretation": {
+    "validated": [
+      "The repository has real visitor traffic and real clone activity.",
+      "Visitors are opening adapter implementation files, not only the repository landing page.",
+      "GitHub internal discovery is currently the dominant source.",
+      "No public issue conversion has occurred yet."
+    ],
+    "notYetValidated": [
+      "The post-v1.1 README/About/Topics changes have not had enough elapsed time to prove incremental traffic lift.",
+      "No claim is made that Stars, clones, website visits, leads, or revenue were caused by the latest optimization batch."
+    ]
+  }
+}

@@ -19,7 +19,10 @@ const requiredFiles = [
   '.github/ISSUE_TEMPLATE/config.yml', '.github/pull_request_template.md',
   'governance/current-batch.preflight.json', 'governance/current-batch.evidence.json',
   'governance/public-source-release-candidate.v1.1.0.json',
-  'scripts/publish-v1.1.0.ps1', 'scripts/verify-release-candidate.js'
+  'governance/github-traffic-baseline-2026-09-06.json',
+  'scripts/publish-v1.1.0.ps1', 'scripts/verify-release-candidate.js',
+  'scripts/github-traffic-report.js', 'scripts/github-traffic-compare.js',
+  'scripts/run-github-traffic-snapshot.ps1', 'scripts/setup-github-traffic-monitor.ps1'
 ];
 for (const file of requiredFiles) expect(exists(file), `Missing public-release file: ${file}`);
 
@@ -39,6 +42,8 @@ expect(pkg.license === 'LicenseRef-BossAI-Community-Source-1.0', 'package.json m
 expect(/BossAI Community Source License 1\.0/.test(license), 'Root LICENSE must remain BossAI Community Source License 1.0.');
 expect(pkg.repository?.url === 'https://github.com/liufeng1976/douyin-taobao-cs.git', 'Repository URL must match the public GitHub repository.');
 expect(pkg.scripts?.demo === 'node examples/offline-demo.js', 'package.json must expose the API-free demo.');
+expect(pkg.scripts?.['growth:traffic'] === 'node scripts/github-traffic-report.js', 'package.json must expose the read-only GitHub traffic report.');
+expect(pkg.scripts?.['growth:traffic:compare'] === 'node scripts/github-traffic-compare.js', 'package.json must expose arbitrary snapshot comparison without hard-coded snapshot arguments.');
 expect(Object.keys(pkg.dependencies || {}).length === 0, 'Hardened runtime must not reintroduce unnecessary third-party runtime dependencies.');
 expect(/API-free/i.test(readme) && /npm run demo/.test(readme), 'README must lead with the API-free runnable path.');
 expect(/没有抖音、淘宝 API 不是.*阻塞/.test(readme), 'README must say missing real APIs do not block public-source use.');
@@ -49,6 +54,7 @@ expect(/bossai-ecommerce-ai-team-skill/.test(readme) && /bossai-radar-lite/.test
 expect(gitignore.split(/\r?\n/).includes('.env'), '.env must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('logs/'), 'logs/ must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('nul'), 'Windows nul artifact must be ignored.');
+expect(gitignore.split(/\r?\n/).includes('.bossai-local/'), 'Local GitHub traffic snapshots must stay outside version control.');
 expect(/node: \[20, 22\]/.test(ci), 'CI must cover Node 20 and 22.');
 expect(/actions\/checkout@v7/.test(ci) && /actions\/setup-node@v7/.test(ci), 'CI must use Node 24-compatible GitHub JavaScript actions.');
 expect(/npm run demo/.test(ci) && /npm run check/.test(ci), 'CI must run API-free demo and full verification.');
