@@ -41,10 +41,35 @@ const SYSTEM_PROMPT = `你是一个专业的电商客服助手，同时服务于
 - 不要泄露其他客户信息
 - 遇到恶意投诉保持冷静，统一回复"已为您记录，会有专人处理"`;
 
+function demoReply(message, kbContext) {
+  const firstKbAnswer = Array.isArray(kbContext) && kbContext[0]?.answer
+    ? String(kbContext[0].answer).trim()
+    : '';
+
+  if (firstKbAnswer) {
+    return `[本地演示模式] ${firstKbAnswer}`;
+  }
+
+  if (/发货|物流|快递|到货/.test(message)) {
+    return '您好，当前为本地演示模式。真实物流状态需要在取得平台授权后接入订单/物流 API 查询；当前不会伪造物流结果。';
+  }
+
+  if (/退货|退款|售后/.test(message)) {
+    return '您好，当前为本地演示模式。退换货规则可通过本地知识库演示，真实订单退款与售后操作需要平台 API 授权并经过人工审核。';
+  }
+
+  return '您好，当前为本地演示模式：可体验客服流程与知识库 RAG；配置 DEEPSEEK_API_KEY 后才会调用 DeepSeek，抖音/淘宝真实消息收发还需要各平台正式 API 凭据与验收。';
+}
+
 /**
  * 生成 AI 回复
  */
 async function generateReply({ message, platform, customerId, shopId, kbContext, orderContext, conversationId }) {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    logInfo({ module: 'ai', event: 'demo_fallback', platform, customerId });
+    return demoReply(message, kbContext);
+  }
+
   try {
     const cacheKey = `${shopId}_${customerId}`;
 
@@ -115,7 +140,7 @@ async function generateReply({ message, platform, customerId, shopId, kbContext,
   } catch (err) {
     logError({ module: 'ai', event: 'generate_error', error: err.message, platform });
     // 降级回复
-    return '您好，我正在处理您的问题，请稍等。如需紧急帮助，请拨打客服电话。';
+    return '您好，我正在处理您的问题，请稍等。如需紧急帮助，请联系人工客服。';
   }
 }
 
@@ -123,6 +148,10 @@ async function generateReply({ message, platform, customerId, shopId, kbContext,
  * 意图识别
  */
 async function detectIntent(message) {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    return { intent: 'other', urgency: 'normal', sentiment: 'neutral', mode: 'demo' };
+  }
+
   try {
     const response = await axios.post(
       AI_API,

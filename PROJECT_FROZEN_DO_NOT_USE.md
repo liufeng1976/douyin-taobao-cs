@@ -1,15 +1,24 @@
-# Project Frozen / Do Not Use As Mainline
+# Historical Freeze Notice — Superseded
 
-This repository has been frozen as an old domestic ecommerce customer-service experiment.
+> **Superseded on 2026-09-06 for the public GitHub acquisition/demo strategy.**
 
-Active replacement project:
+This file records an older product decision from 2026-07-09. At that time, this repository was frozen as a domestic ecommerce customer-service experiment and was not intended to remain an active product mainline.
+
+That decision is no longer the public-repository strategy.
+
+Current status:
+
+- this repository remains **not** the production BossAI Commerce mainline;
+- it is intentionally maintained as a **public Community Demo and GitHub acquisition entry point**;
+- local customer-service workflow, knowledge-base/RAG behavior, UI, and DeepSeek integration patterns may be improved for demonstration, documentation, testing, and community evaluation;
+- real Douyin / Taobao / QianNiu production API integration is **not** claimed as validated until official credentials, current API contracts, signatures, permissions, and end-to-end platform tests are available;
+- no platform credentials, customer data, commercial entitlement authority, or proprietary BossAI Commerce control-plane implementation belongs in this repository;
+- commercial use of current BossAI-owned revisions remains governed by the repository `LICENSE`.
+
+The old path reference below is historical only and must not be treated as the current canonical product location:
 
 `C:\Users\42059\bossai-commerce-copilot`
 
-New product direction:
+For the current BossAI product entry point, use:
 
-BossAI Commerce Copilot starts with cross-border English AI support drafts and human review. Domestic Douyin / Taobao / Tmall support remains Phase 2, not the active MVP.
-
-Do not continue new development here unless explicitly restoring archived code. Keep this folder only as a historical reference.
-
-Frozen on: 2026-07-09
+https://bossaios.com

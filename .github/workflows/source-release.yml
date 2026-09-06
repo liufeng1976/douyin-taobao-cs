@@ -1,0 +1,125 @@
+name: Community Demo Source Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/release-requests/v1.0.0.json'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Community Demo metadata and truth boundary
+        run: npm run verify:community-demo
+
+      - name: Run local no-key E2E demo baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3100 NODE_ENV=test API_KEYS=dev-key-001 npm start > /tmp/douyin-taobao-cs.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true; cat /tmp/douyin-taobao-cs.log || true' EXIT
+
+          for attempt in {1..20}; do
+            if curl -fsS http://127.0.0.1:3100/health >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS http://127.0.0.1:3100/health
+          PORT=3100 npm test
+
+      - name: Resolve governed Community Demo release request
+        id: release_request
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const pkg = require('./package.json');
+          const request = JSON.parse(fs.readFileSync('.github/release-requests/v1.0.0.json', 'utf8'));
+          const expectedLicense = 'LicenseRef-BossAI-Community-Source-1.0';
+
+          if (request.schemaVersion !== 'bossai.community-demo-release-request.v1') throw new Error('Unexpected release request schema.');
+          if (request.tag !== `v${pkg.version}`) throw new Error(`Release tag ${request.tag} does not match package version ${pkg.version}.`);
+          if (request.version !== pkg.version) throw new Error('Release request version does not match package version.');
+          if (request.license !== expectedLicense || pkg.license !== expectedLicense) throw new Error('Release request/package license mismatch.');
+          if (pkg.private !== true) throw new Error('package.json must remain private=true.');
+          if (request.sourceOnly !== true) throw new Error('Only a source release is permitted.');
+          if (request.productionPlatformApiValidated !== false) throw new Error('This release must not claim production platform API validation.');
+          if (request.signedBinaryIncluded !== false) throw new Error('This release must not include a signed binary.');
+
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `tag=${request.tag}\n`);
+          NODE
+
+      - name: Create governed source tag
+        shell: bash
+        env:
+          TAG: ${{ steps.release_request.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git fetch --tags origin
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists; refusing to move or overwrite it."
+            exit 1
+          fi
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "$TAG"
+
+      - name: Publish Community Demo source release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release_request.outputs.tag }}
+        run: |
+          cat > /tmp/release-notes.md <<'NOTES'
+          # douyin-taobao-cs v1.0.0 — Community Demo Source Release
+
+          Public source-available demo for AI ecommerce customer-service workflows, DeepSeek integration patterns, local knowledge-base/RAG flows, and Douyin/Taobao/QianNiu adapter structure.
+
+          ## What is validated
+
+          - locked dependency install with `npm ci`;
+          - repository Community Source metadata/truth boundary gate;
+          - local server health;
+          - local E2E demo baseline without DeepSeek or platform production credentials;
+          - explicit no-Key demo fallback that does not pretend a real model call occurred.
+
+          ## What is NOT claimed
+
+          - real Douyin, Taobao, or QianNiu production API access is not validated;
+          - no platform App Key, Secret, Session, shop credential, or customer data is included;
+          - historical adapter endpoints/fields must be checked against current official platform documentation before production use;
+          - this is not a hosted SaaS release and contains no signed production binary.
+
+          ## License
+
+          BossAI Community Source License 1.0. Personal, educational, research, evaluation, and other non-commercial use is permitted subject to `LICENSE`. Commercial operation, client delivery, SaaS, white-label/OEM, resale, and other commercial use require BossAI authorization.
+
+          Commercial entry point: https://bossaios.com
+          NOTES
+
+          gh release create "$TAG" \
+            --title "douyin-taobao-cs v1.0.0 — Community Demo Source Release" \
+            --notes-file /tmp/release-notes.md \
+            --verify-tag
