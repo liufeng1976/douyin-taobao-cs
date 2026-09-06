@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "project": "douyin-taobao-cs",
+  "batch": "external-distribution-preparation-2026-09-06",
+  "capturedAt": "2026-09-06T14:08:46Z",
+  "baseCommit": "be5e9506a9d268aad0fe380bfa23d1ef9dc9a828",
+  "publicTrafficAtPreparation": {
+    "rolling14DayViews": 203,
+    "uniqueVisitors": 106,
+    "clones": 30,
+    "uniqueCloners": 26,
+    "stars": 20,
+    "forks": 5,
+    "openIssues": 0
+  },
+  "channelDecisions": {
+    "showHN": "priority-candidate-human-approval-required",
+    "redditSelfhosted": "current-new-project-megathread-only-until-2026-09-21-recheck-rules-before-post",
+    "redditEcommerce": "no-go-direct-promotion-under-current-rules"
+  },
+  "machineEvidence": {
+    "channelAdapterTests": "20/20 passed",
+    "e2eTests": "17/17 passed",
+    "publicReleaseVerification": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "truthBoundary": {
+    "sourceAvailableNotOsiOpenSource": true,
+    "liveMarketplaceProductionApiClaim": false,
+    "automaticCustomerSend": false,
+    "externalBusinessMutation": false,
+    "trafficOrRevenueCausationClaim": false
+  },
+  "publicationState": {
+    "showHNPublished": false,
+    "redditPublished": false,
+    "otherExternalPublication": false
+  },
+  "completionClaim": "Distribution package prepared and verified; no external publication was executed."
+}

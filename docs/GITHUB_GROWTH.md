@@ -93,4 +93,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-github-traffic
 
 A different local clock time can be supplied with `-At HH:mm`. The scheduled runner performs read-only GitHub traffic queries using the current Windows user's existing `gh` authentication. It does not publish content, create Issues, message customers or mutate marketplace data.
 
+## External distribution
+
+Prepared, human-approved external distribution is governed by `docs/EXTERNAL_DISTRIBUTION.md` and `governance/external-distribution-campaign.template.json`.
+
+Current channel policy:
+
+- Show HN: priority candidate after explicit approval;
+- r/selfhosted: New Project Megathread only until the repository is at least three months old (2026-09-21), with rules rechecked immediately before posting;
+- r/ecommerce: no direct promotion under the current rules.
+
+Do not automatically publish, cross-post, solicit votes, or claim that one referrer observation proves causation.
+
 Measure actual GitHub traffic and downstream conversions before claiming growth impact.
