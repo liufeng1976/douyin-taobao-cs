@@ -12,7 +12,7 @@ const requiredFiles = [
   'README.md', 'README_EN.md', 'LICENSE', 'NOTICE.md', 'CHANGELOG.md',
   'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'SECURITY.md',
   'examples/offline-demo.js',
-  'docs/ARCHITECTURE.md', 'docs/ROADMAP.md', 'docs/FAQ.md', 'docs/PUBLIC_RELEASE.md', 'docs/GITHUB_GROWTH.md',
+  'docs/ARCHITECTURE.md', 'docs/ROADMAP.md', 'docs/FAQ.md', 'docs/PUBLIC_RELEASE.md', 'docs/GITHUB_GROWTH.md', 'docs/EXTERNAL_DISTRIBUTION.md',
   '.github/workflows/ci.yml', '.github/workflows/source-release.yml', '.github/workflows/v1.1-source-release.yml',
   '.github/release-requests/v1.0.0.json', '.github/release-requests/v1.1.0.json',
   '.github/dependabot.yml', '.github/ISSUE_TEMPLATE/bug_report.yml', '.github/ISSUE_TEMPLATE/feature_request.yml', '.github/ISSUE_TEMPLATE/community_demo_feedback.yml',
@@ -20,6 +20,7 @@ const requiredFiles = [
   'governance/current-batch.preflight.json', 'governance/current-batch.evidence.json',
   'governance/public-source-release-candidate.v1.1.0.json',
   'governance/github-traffic-baseline-2026-09-06.json',
+  'governance/external-distribution-2026-09-06.preflight.json', 'governance/external-distribution-campaign.template.json',
   'scripts/publish-v1.1.0.ps1', 'scripts/verify-release-candidate.js',
   'scripts/github-traffic-report.js', 'scripts/github-traffic-compare.js',
   'scripts/run-github-traffic-snapshot.ps1', 'scripts/setup-github-traffic-monitor.ps1'
@@ -29,6 +30,7 @@ for (const file of requiredFiles) expect(exists(file), `Missing public-release f
 const pkg = JSON.parse(read('package.json'));
 const readme = read('README.md');
 const readmeEn = read('README_EN.md');
+const externalDistribution = read('docs/EXTERNAL_DISTRIBUTION.md');
 const license = read('LICENSE');
 const gitignore = read('.gitignore');
 const ci = read('.github/workflows/ci.yml');
@@ -51,6 +53,10 @@ expect(/source-available/i.test(readmeEn), 'English README must truthfully descr
 expect(/不是 OSI Open Source/.test(readme), 'README must not mislabel Community Source as OSI open source.');
 expect(/bossaios\.com/.test(readme), 'README must retain the BossAI commercial/traffic entry.');
 expect(/bossai-ecommerce-ai-team-skill/.test(readme) && /bossai-radar-lite/.test(readme) && /bossaios-com-video-agent/.test(readme) && /bossai-os-core/.test(readme), 'README must preserve BossAI ecosystem routing links.');
+expect(/Show HN — PRIORITY CANDIDATE/.test(externalDistribution), 'External distribution plan must preserve the Show HN candidate path.');
+expect(/r\/ecommerce — NO-GO FOR DIRECT PROMOTION/.test(externalDistribution), 'External distribution plan must preserve the r/ecommerce no-go boundary.');
+expect(/explicit human approval/i.test(externalDistribution), 'External distribution must remain behind explicit human approval.');
+expect(/not OSI open source/i.test(externalDistribution), 'External distribution must state source-available licensing truthfully.');
 expect(gitignore.split(/\r?\n/).includes('.env'), '.env must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('logs/'), 'logs/ must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('nul'), 'Windows nul artifact must be ignored.');
