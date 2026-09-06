@@ -2,6 +2,8 @@
 
 > **公开社区演示 / Public Community Demo** — 用于展示多平台客服流程、DeepSeek 接入方式、知识库 RAG、Webhook 适配器结构、人工接管与多店铺管理思路。
 
+[English README](README_EN.md) · [BossAI 官网](https://bossaios.com) · [v1.0.0 Community Demo Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0)
+
 [![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/network/members)
 [![License](https://img.shields.io/badge/license-BossAI%20Community%20Source-orange)](LICENSE)
