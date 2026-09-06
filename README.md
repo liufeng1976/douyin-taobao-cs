@@ -1,6 +1,21 @@
-# 🤖 抖音 + 淘宝 AI 自动客服系统
+# 🤖 抖音 + 淘宝 / 千牛 AI 自动客服｜DeepSeek + RAG
 
-同时管理**抖音电商**和**淘宝/千牛**的 AI 智能客服系统。
+> 同时管理 **抖音电商** 和 **淘宝 / 千牛** 的 AI 智能客服系统。支持 DeepSeek 智能回复、知识库 RAG、Webhook 实时接入、人工接管与多店铺统一管理。
+
+[![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/network/members)
+
+如果这个项目对你有帮助，欢迎 **Star**。这会帮助更多做抖音、淘宝、千牛、电商客服和 AI 自动化的人发现它。
+
+## BossAI 生态
+
+这个项目现在也是 BossAI GitHub 公开项目体系中的一个真实流量入口。现有代码和使用方式保持独立，不要求迁移。
+
+- **BossAI 官网**：https://bossaios.com
+- **BossAI 电商总管 Skill**：https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill
+- **BossAI GitHub**：https://github.com/liufeng1976
+
+如果你需要的不只是“自动回复”，而是继续覆盖选品、运营、客服、销售、内容、项目管理和人工审批，可以继续查看 BossAI 电商总管 Skill。
 
 ## ✨ 核心功能
 
@@ -30,7 +45,7 @@ douyin-taobao-cs/
 │   │   ├── rateLimit.js   # 限流
 │   │   └── errorHandler.js# 错误处理
 │   └── utils/
-│       ├── logger.js      # 日志
+│       ├── logger.js       # 日志
 │       └── store.js       # 店铺存储
 ├── frontend/
 │   ├── index.html         # 管理面板
