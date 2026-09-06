@@ -1,110 +1,153 @@
-// AI 客服前端面板 JavaScript
 const API = '/api';
-const SHOP_ID = 'douyin-shop-001';
 
-document.getElementById('send-btn').addEventListener('click', sendTestMessage);
-document.getElementById('user-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') sendTestMessage();
-});
-document.getElementById('add-faq-btn').addEventListener('click', addFAQ);
+const $ = (id) => document.getElementById(id);
 
-async function sendTestMessage() {
-  const input = document.getElementById('user-input');
-  const platform = document.getElementById('platform-select').value;
-  const message = input.value.trim();
+function setPill(id, text, state) {
+  const element = $(id);
+  element.textContent = text;
+  element.className = `pill ${state || ''}`.trim();
+}
+
+async function api(path, options = {}) {
+  const response = await fetch(API + path, {
+    ...options,
+    headers: {
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  let payload = {};
+  try { payload = await response.json(); } catch { payload = {}; }
+  if (!response.ok) {
+    const error = new Error(payload.error || payload.message || `HTTP ${response.status}`);
+    error.code = payload.code;
+    throw error;
+  }
+  return payload;
+}
+
+async function loadStatus() {
+  try {
+    const data = await api('/integration/status');
+    setPill('bridge-status', data.bridge?.configured ? '已配置' : '未配置', data.bridge?.configured ? 'ok' : 'block');
+    setPill('douyin-status', data.channels?.douyin?.configured ? '已配置' : '未配置', data.channels?.douyin?.configured ? 'ok' : 'warn');
+    setPill('taobao-status', data.channels?.taobao?.configured ? '已配置' : '未配置', data.channels?.taobao?.configured ? 'ok' : 'warn');
+  } catch (error) {
+    setPill('bridge-status', '无法读取', 'block');
+    setPill('douyin-status', '无法读取', 'block');
+    setPill('taobao-status', '无法读取', 'block');
+  }
+}
+
+async function generateDraft() {
+  const button = $('send-btn');
+  const message = $('user-input').value.trim();
+  const platform = $('platform-select').value;
+  const shopId = $('shop-id').value.trim() || 'local-diagnostic';
   if (!message) return;
 
-  appendMessage('user', message, platform);
-  input.value = '';
+  button.disabled = true;
+  button.textContent = '生成中…';
+  $('draft-output').textContent = '正在生成受限草稿…';
+  setPill('review-badge', '待生成', 'warn');
 
   try {
-    const res = await fetch(API + '/chat', {
+    $('draft-output').classList.remove('error');
+    const data = await api('/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': 'dev-key-001' },
-      body: JSON.stringify({ message, platform, shopId: SHOP_ID, customerId: 'test-customer' }),
+      body: JSON.stringify({ message, platform, shopId, customerId: 'local-diagnostic-customer' }),
     });
-    const data = await res.json();
-    appendMessage('bot', data.reply || '抱歉，暂时无法回复。', platform);
-  } catch (err) {
-    appendMessage('bot', '网络错误，请重试。', platform);
+    $('draft-output').textContent = data.draft || data.reply || '未生成草稿。';
+    $('draft-source').textContent = data.source || 'unknown';
+    $('draft-risk').textContent = data.policy?.risk || 'unknown';
+    $('draft-policy').textContent = data.policy?.policy || 'unknown';
+    setPill('review-badge', data.reviewRequired ? '必须人工审核' : '待确认', data.reviewRequired ? 'warn' : 'block');
+  } catch (error) {
+    $('draft-output').textContent = `草稿生成失败：${error.message}`;
+    $('draft-output').classList.add('error');
+    $('draft-source').textContent = 'error';
+    $('draft-risk').textContent = '—';
+    $('draft-policy').textContent = error.code || 'request_failed';
+    setPill('review-badge', '失败', 'block');
+  } finally {
+    button.disabled = false;
+    button.textContent = '生成待审核草稿';
   }
 }
 
-function appendMessage(role, text, platform) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  const badges = {
-    douyin: '<span class="badge douyin">抖音</span>',
-    taobao: '<span class="badge taobao">淘宝</span>'
-  };
-  const badge = badges[platform] || '';
-  const prefix = role === 'user'
-    ? '👤 客户 ' + badge
-    : '🤖 AI 客服';
-  div.innerHTML = '<div class="meta">' + prefix + '</div>' + escapeHtml(text);
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-async function loadFAQ() {
+async function loadKnowledge() {
+  const shopId = $('shop-id').value.trim() || 'local-diagnostic';
+  const list = $('faq-list');
   try {
-    const res = await fetch(API + '/knowledge/' + SHOP_ID, {
-      headers: { 'x-api-key': 'dev-key-001' }
+    const data = await api(`/knowledge/${encodeURIComponent(shopId)}`);
+    const items = data.documents || [];
+    if (!items.length) {
+      list.innerHTML = '<li class="faq-item"><div class="faq-a">暂无本地诊断知识。生产知识应由统一客服/知识权威提供。</div></li>';
+      return;
+    }
+    list.innerHTML = items.map((item) => `
+      <li class="faq-item">
+        <div class="faq-q">${escapeHtml(item.question)}</div>
+        <div class="faq-a">${escapeHtml(item.answer)}</div>
+        <div class="faq-tools"><button data-delete-id="${escapeAttribute(item.id)}">删除</button></div>
+      </li>`).join('');
+    list.querySelectorAll('[data-delete-id]').forEach((button) => {
+      button.addEventListener('click', () => deleteKnowledge(button.dataset.deleteId));
     });
-    const data = await res.json();
-    const list = document.getElementById('faq-list');
-    list.innerHTML = (data.documents || []).map(function(d) {
-      return '<li class="faq-item">' +
-        '<div>' +
-        '<div class="q">' + escapeHtml(d.question) + '</div>' +
-        '<div class="a">' + escapeHtml(d.answer) + '</div>' +
-        '</div>' +
-        '<button onclick="deleteFAQ(\'' + d.id + '\')" style="background:none;border:none;cursor:pointer;color:#d63031;">✕</button>' +
-        '</li>';
-    }).join('') || '<li class="faq-item" style="color:#636e72">暂无 FAQ，添加几条吧～</li>';
-  } catch (err) {
-    console.error('加载 FAQ 失败', err);
+  } catch (error) {
+    list.innerHTML = `<li class="faq-item"><div class="faq-a error">读取失败：${escapeHtml(error.message)}</div></li>`;
   }
 }
 
-async function addFAQ() {
-  const q = document.getElementById('new-question').value.trim();
-  const a = document.getElementById('new-answer').value.trim();
-  if (!q || !a) return alert('请填写问题和答案');
-
+async function addKnowledge() {
+  const shopId = $('shop-id').value.trim() || 'local-diagnostic';
+  const question = $('new-question').value.trim();
+  const answer = $('new-answer').value.trim();
+  if (!question || !answer) return;
   try {
-    await fetch(API + '/knowledge/' + SHOP_ID, {
+    await api(`/knowledge/${encodeURIComponent(shopId)}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': 'dev-key-001' },
-      body: JSON.stringify({ question: q, answer: a, category: 'general' }),
+      body: JSON.stringify({
+        question,
+        answer,
+        category: 'operator-verified',
+        provenance: 'local-diagnostic-console',
+      }),
     });
-    document.getElementById('new-question').value = '';
-    document.getElementById('new-answer').value = '';
-    loadFAQ();
-  } catch (err) {
-    alert('添加失败');
+    $('new-question').value = '';
+    $('new-answer').value = '';
+    await loadKnowledge();
+  } catch (error) {
+    window.alert(`添加失败：${error.message}`);
   }
 }
 
-async function deleteFAQ(id) {
+async function deleteKnowledge(id) {
   try {
-    await fetch(API + '/knowledge/' + SHOP_ID + '/' + id, {
-      method: 'DELETE',
-      headers: { 'x-api-key': 'dev-key-001' }
-    });
-    loadFAQ();
-  } catch (err) {
-    alert('删除失败');
+    const shopId = $('shop-id').value.trim() || 'local-diagnostic';
+    await api(`/knowledge/${encodeURIComponent(shopId)}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    await loadKnowledge();
+  } catch (error) {
+    window.alert(`删除失败：${error.message}`);
   }
 }
 
-function escapeHtml(text) {
+function escapeHtml(value) {
   const div = document.createElement('div');
-  div.textContent = text;
+  div.textContent = String(value ?? '');
   return div.innerHTML;
 }
 
-// 初始化
-loadFAQ();
-setInterval(loadFAQ, 30000);
+function escapeAttribute(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;');
+}
+
+$('send-btn').addEventListener('click', generateDraft);
+$('add-faq-btn').addEventListener('click', addKnowledge);
+$('shop-id').addEventListener('change', loadKnowledge);
+$('user-input').addEventListener('keydown', (event) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') generateDraft();
+});
+
+loadStatus();
+loadKnowledge();

@@ -1,41 +1,39 @@
 name: Community Demo feedback / Community Demo 反馈
-description: Share your local demo result and integration needs without posting platform credentials or customer data. / 反馈本地 Demo 结果和集成需求，请勿提交平台凭据或客户数据。
+description: Share your API-free demo result and integration needs without posting platform credentials or customer data. / 反馈 API-free Demo 结果和集成需求，请勿提交平台凭据或客户数据。
 title: "[Demo] "
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for evaluating the **douyin-taobao-cs v1.0.0 Community Demo**.
+        Thank you for evaluating the BossAI domestic ecommerce customer-service connector reference.
 
-        This repository is a public technical demo. **Real Douyin / Taobao / QianNiu production API validation has not been completed.**
+        The current hardened path is designed to run without real Douyin/Taobao APIs. Real production platform validation is a separate future step.
 
-        Never post App Keys, App Secrets, access tokens, session keys, shop credentials, cookies, customer conversations, order data, phone numbers, addresses, private logs, or other sensitive/private information.
+        Never post App Keys, App Secrets, access tokens, session keys, cookies, customer conversations, order data, phone numbers, addresses, private logs, or other sensitive/private information.
 
-        感谢试用 **douyin-taobao-cs v1.0.0 Community Demo**。
+        感谢试用 BossAI 国内电商客服 Connector Reference。当前硬化版本无需真实抖音/淘宝 API 即可运行；真实生产平台验收属于后续独立步骤。
 
-        本仓库是公开技术演示项目，**尚未完成真实抖音 / 淘宝 / 千牛生产 API 验收**。
-
-        请勿提交 App Key、App Secret、Access Token、Session Key、店铺凭据、Cookie、客户对话、订单数据、手机号、地址、私有日志或其他敏感/隐私信息。
+        请勿提交 App Key、App Secret、Access Token、Session Key、Cookie、客户对话、订单数据、手机号、地址、私有日志或其他敏感/隐私信息。
 
   - type: dropdown
     id: local_demo
     attributes:
-      label: Local demo result / 本地 Demo 结果
+      label: API-free demo result / API-free Demo 结果
       options:
-        - Started successfully and UI opened / 启动成功并打开界面
-        - Server started but UI/workflow had a problem / 服务启动但界面或流程有问题
+        - Synthetic signatures verified and demo passed / 模拟签名验证通过且 Demo PASS
+        - Demo ran but one step failed / Demo 可运行但有步骤失败
         - Installation or startup failed / 安装或启动失败
         - Not tested yet / 尚未测试
     validations:
       required: true
 
   - type: dropdown
-    id: ai_mode
+    id: draft_mode
     attributes:
-      label: AI mode tested / 测试的 AI 模式
+      label: Draft mode tested / 草稿模式
       options:
-        - No-key local Demo fallback / 无 Key 本地 Demo fallback
-        - DeepSeek with my own authorized key / 使用我自己的合法 DeepSeek Key
+        - Local safety fallback without BossAI OS key / 无 BossAI OS Key 的本地安全 fallback
+        - BossAI OS bounded draft with my authorized customer key / 使用我自己的 BossAI OS 客户级 Key
         - Both / 两者都测试了
         - Not sure / 不确定
     validations:
@@ -47,15 +45,13 @@ body:
       label: Which areas matter to you? / 你最关注哪些方向？
       options:
         - label: Douyin ecommerce customer service / 抖音电商客服
-        - label: Taobao / QianNiu customer service / 淘宝 / 千牛客服
-        - label: Knowledge base / RAG / 知识库 RAG
-        - label: Human review and takeover / 人工审核与接管
-        - label: Multi-shop management / 多店铺管理
+        - label: Taobao / Tmall / Qianniu customer service / 淘宝 / 天猫 / 千牛客服
+        - label: Signed webhook compatibility / Webhook 签名兼容
+        - label: Human review and safety policy / 人工审核与安全策略
+        - label: Canonical BossAI Customer Service intake / BossAI 统一客服 Intake
         - label: Ecommerce operations beyond customer service / 客服之外的电商运营
         - label: Market/opportunity research / 市场与商机研究
         - label: Video/content production / 视频与内容生产
-    validations:
-      required: true
 
   - type: dropdown
     id: platform_access
@@ -64,7 +60,7 @@ body:
       description: Do not paste credentials. This asks only whether access exists. / 这里只询问是否具备权限，请勿粘贴凭据。
       options:
         - Douyin access / 已有抖音权限
-        - Taobao / QianNiu access / 已有淘宝 / 千牛权限
+        - Taobao / Tmall / Qianniu access / 已有淘宝 / 天猫 / 千牛权限
         - Both / 两者都有
         - No / 暂无
         - Applying / 申请中
@@ -85,18 +81,15 @@ body:
     attributes:
       label: What blocked you? / 什么阻塞了你？
       description: Include reproducible steps and public-safe error text. Remove credentials and customer data. / 可填写复现步骤和可公开错误信息，请删除凭据和客户数据。
-      placeholder: "1. ...\n2. ...\n3. ..."
-    validations:
-      required: false
 
   - type: dropdown
     id: next_step
     attributes:
       label: Most useful next step / 对你最有价值的下一步
       options:
-        - Improve the local customer-service demo / 完善本地客服 Demo
+        - Improve the API-free connector reference / 完善 API-free Connector Reference
         - Validate a real Douyin integration after authorized credentials are available / 有合法权限后验证真实抖音接入
-        - Validate a real Taobao/QianNiu integration after authorized credentials are available / 有合法权限后验证真实淘宝/千牛接入
+        - Validate a real Taobao/Tmall/Qianniu integration after authorized credentials are available / 有合法权限后验证真实淘宝/天猫/千牛接入
         - Continue into BossAI Ecommerce Manager / 转到 BossAI Ecommerce Manager
         - Continue into BossAI Radar Lite / 转到 BossAI Radar Lite
         - Continue into BossAI Video Agent / 转到 BossAI Video Agent
@@ -123,7 +116,7 @@ body:
     attributes:
       label: Safety acknowledgement / 安全确认
       options:
-        - label: I removed App Keys, App Secrets, tokens, session keys, shop credentials, cookies, customer conversations, order/customer data, private logs and other sensitive/private information. / 我已移除 App Key、App Secret、Token、Session Key、店铺凭据、Cookie、客户对话、订单/客户数据、私有日志及其他敏感/隐私信息。
+        - label: I removed merchant secrets, tokens, cookies, customer conversations, order/customer data, private logs and other sensitive/private information. / 我已移除商家 Secret、Token、Cookie、客户对话、订单/客户数据、私有日志及其他敏感/隐私信息。
           required: true
-        - label: I understand this repository does not claim validated Douyin/Taobao/QianNiu production API access. / 我知道本仓库不声称已完成抖音/淘宝/千牛生产 API 验收。
+        - label: I understand this repository does not claim validated Douyin/Taobao/Tmall/Qianniu production API access. / 我知道本仓库不声称已完成抖音/淘宝/天猫/千牛生产 API 验收。
           required: true

@@ -1,93 +1,51 @@
-# Contributing to douyin-taobao-cs
+# Contributing
 
-Thanks for helping improve this BossAI Community Demo.
+Thanks for improving the BossAI Douyin/Taobao customer-service connector reference.
 
-This repository is maintained as a **source-available technical demo and acquisition project**, not as a claim that Douyin, Taobao, or QianNiu production APIs have already been fully validated.
-
-## Good contributions
-
-The most useful pull requests are small, reproducible, and evidence-backed. Good areas include:
-
-- local Demo bugs and E2E reliability;
-- DeepSeek optional integration and explicit no-key fallback behavior;
-- RAG / FAQ retrieval quality;
-- human-review and handoff flows;
-- multi-shop demo structure;
-- adapter structure improvements that are checked against current official platform documentation;
-- documentation corrections with a verifiable source;
-- tests that prevent misleading claims or accidental production credential dependencies.
-
-## Production-platform changes require evidence
-
-If a pull request changes Douyin, Taobao, or QianNiu adapter behavior, include:
-
-1. the exact official documentation page or current platform contract you checked;
-2. the date you checked it;
-3. which fields/signature/token/webhook behavior were validated;
-4. whether the change was tested only with fixtures/local mocks or with your own legitimately authorized production/sandbox account;
-5. any known permissions, review, rate-limit, risk-control, or account-scope constraints.
-
-Do not describe fixture/local-mock success as production validation.
-
-## Never submit secrets or customer data
-
-Do **not** commit or paste any of the following into code, tests, issues, pull requests, screenshots, logs, or fixtures:
-
-- App Key / App Secret;
-- access tokens or refresh tokens;
-- Taobao/QianNiu session keys;
-- cookies or login sessions;
-- shop credentials;
-- passwords or API keys;
-- real customer conversations;
-- names, phone numbers, addresses, order IDs, payment information, or other customer/order data;
-- private logs or internal company data.
-
-Use synthetic fixtures and obvious placeholders only.
-
-## Keep the truth boundary intact
-
-A contribution must not imply any of the following unless the repository contains reproducible evidence for the claim:
-
-- official partnership or endorsement by Douyin, Taobao, QianNiu, DeepSeek, or another third party;
-- completed production API approval;
-- production-ready message sending, order access, after-sales access, or risk-control clearance;
-- a hosted BossAI service;
-- commercial-use authorization from downloading or forking this repository.
-
-The current Community Demo may run locally without platform production credentials, and no-key mode must remain explicitly identified as Demo fallback rather than a real DeepSeek call.
-
-## Before opening a pull request
-
-Run:
+## Before opening a PR
 
 ```bash
 npm ci
-npm run verify:community-demo
-npm start
-# in another terminal
-npm test
+npm run demo
+npm run check
 ```
 
-Your pull request should explain:
+Use synthetic/demo data. Never submit real merchant keys, tokens, cookies, customer PII or production payloads containing sensitive data.
 
-- what changed;
-- why it is needed;
-- how you reproduced the old behavior;
-- how you verified the new behavior;
-- whether any third-party API contract is involved;
-- whether any user-visible wording changed.
+## Project boundaries
 
-## License and rights
+Contributions should preserve these rules:
 
-Only submit material that you wrote yourself or have the right to contribute.
+- this repository is a channel adapter/reference source, not a second BossAI customer-service product or Agent Runtime;
+- AI drafting uses the BossAI OS boundary, not direct provider master keys;
+- customer-facing output remains review-only;
+- automatic sends/refunds/order/account mutations remain disabled;
+- canonical Customer Service owns Case/brand routing/history/audit/approval;
+- real marketplace API access is optional future integration and must not be claimed without evidence.
 
-Accepted contributions are distributed as part of this repository under the repository's current [`LICENSE`](LICENSE), unless a separate written agreement explicitly says otherwise. The BossAI Community Source License is source-available and is not an OSI-approved open-source license. Commercial-use rights are not granted merely by contributing, downloading, forking, or installing the repository.
+## Good contributions
 
-Third-party APIs, SDKs, trademarks, accounts, credentials, and data remain governed by their own terms.
+- additional synthetic webhook fixtures;
+- normalization compatibility for documented message variants;
+- security and signature tests;
+- data-minimization improvements;
+- better docs, examples, CI and diagnostics;
+- read-only platform fact extraction that does not expand business mutation authority.
 
-## Scope
+## Platform-contract evidence
 
-This repository is not the production BossAI Commerce authority and must not grow a second BossAI identity, billing, payment, entitlement, or commercial-governance system.
+If a PR changes Douyin, Taobao, Tmall or Qianniu integration behavior, include:
 
-For broader ecommerce orchestration, see [BossAI Ecommerce Manager Skill](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill). For BossAI product/commercial information, see https://bossaios.com.
+1. the exact official documentation page or current platform contract checked;
+2. the date it was checked;
+3. which fields, signature, token, webhook or read-only API behavior changed;
+4. whether validation used only fixtures/local mocks, an authorized sandbox, or your own legitimately authorized production account;
+5. known permission, review, rate-limit, risk-control or account-scope constraints.
+
+Fixture/mock success must never be described as production validation. Do not paste credentials, private payloads or customer/order data as evidence.
+
+## PR description
+
+Explain what changed, why it is needed, how the old behavior was reproduced, how the new behavior was verified, whether a third-party platform contract is involved, and whether any user-visible wording changed.
+
+By contributing, you confirm you have the right to submit the contribution and agree that accepted contributions are distributed under the repository's `LICENSE` terms. The BossAI Community Source License is source-available, not OSI-approved open source; contributing, downloading or forking does not itself grant commercial-use rights.

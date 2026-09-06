@@ -1,168 +1,270 @@
-# 🤖 抖音 + 淘宝 / 千牛 AI 自动客服｜DeepSeek + RAG
+# BossAI Douyin / Taobao Customer Service Connector
 
-> **公开社区演示 / Public Community Demo** — 用于展示多平台客服流程、DeepSeek 接入方式、知识库 RAG、Webhook 适配器结构、人工接管与多店铺管理思路。
+[![CI](https://github.com/liufeng1976/douyin-taobao-cs/actions/workflows/ci.yml/badge.svg)](https://github.com/liufeng1976/douyin-taobao-cs/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
+[![License](https://img.shields.io/badge/license-BossAI%20Community%20Source-orange)](LICENSE)
+
+**抖音电商 / 淘宝 / 天猫 / 千牛客服消息 Connector 参考实现。** 聚焦签名校验、消息标准化、幂等、最小数据、风险分级、人工审核和 BossAI Customer Service 接入边界。
+
+**API-free first run：没有抖音或淘宝 API 也可以完整运行 Demo、测试和 CI。**
+
+> 这是 BossAI 的公开 source-available 技术与获客项目，不声称已经获得抖音/淘宝生产 API 权限，也不把自动回复、退款或订单修改伪装成已上线能力。
 
 [English README](README_EN.md) · [BossAI 官网](https://bossaios.com) · [v1.0.0 Community Demo Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0)
 
-[![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/network/members)
-[![License](https://img.shields.io/badge/license-BossAI%20Community%20Source-orange)](LICENSE)
+## 3 分钟跑起来
 
-**许可状态：Source Available / 源码公开，不是 OSI Open Source。** 个人、教育、研究、评估及其他非商业用途免费；公司经营、代运营、客户服务、收费交付、SaaS、白标/OEM 或其他商业用途需要 BossAI 商业授权。完整条款见 [`LICENSE`](LICENSE)。
-
-## ⚠️ 当前状态 / Current status
-
-这个仓库现在作为 **BossAI GitHub 获客与技术演示项目** 维护，不是 BossAI Commerce 的生产主线。
-
-- 本地客服流程、知识库 CRUD、RAG 接线和无 Key Demo fallback 可以直接运行。
-- 未配置 `DEEPSEEK_API_KEY` 时，系统会明确返回“本地演示模式”结果，不会假装已经调用真实模型。
-- 抖音与淘宝/千牛代码目前是 **平台集成骨架**；**尚未完成真实抖音 / 淘宝生产 API 验收**，仓库不附带平台 App Key、Secret、Session 或店铺凭据。
-- 不应把当前仓库描述为“已获得抖音/淘宝官方生产接入”或“开箱即用的生产客服”。真实上线前必须使用你自己的正式平台权限、核对最新 API 文档并完成签名、消息收发、订单/售后权限和风控验收。
-- 当前 `v1.0.0` Release 仅是 **Community Demo Source Release**，不包含 SaaS、托管服务、生产账号或商业授权。
-
-如果这个项目对你有帮助，欢迎 **Star**。这会帮助更多做抖音、淘宝、千牛、电商客服和 AI 自动化的人发现它。
-
-## BossAI 生态：从这个 Demo 继续
-
-这个项目是 BossAI GitHub 公开项目体系中的流量入口。你不需要迁移现有代码；根据下一步目标，直接选择对应公开项目：
-
-| 你接下来要做什么 | BossAI 公开项目 | 适合谁 |
-| --- | --- | --- |
-| 把客服继续扩展到选品、运营、内容、销售、项目执行和人工审批 | **[BossAI Ecommerce Manager Skill](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)** | 电商运营者、AI Agent 用户 |
-| 从 Reddit / HN / GitHub Issues / ArXiv / RSS 中找真实痛点和商业机会 | **[BossAI Radar Lite](https://github.com/liufeng1976/bossai-radar-lite)** | 创业者、产品经理、市场研究 |
-| 在 Windows 本地完成文案→配音→数字人→字幕/音乐→成片 | **[BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent)** | 内容创作者、视频自动化用户 |
-| 在自己的 AI 应用里复用 Skills / Workflows / local RAG / file parsing / webhook security | **[BossAI OS Core](https://github.com/liufeng1976/bossai-os-core)** | 开发者、AI 应用团队 |
-
-- **BossAI 官网 / 商业授权入口**：https://bossaios.com
-- **当前 Community Demo Release**：https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0
-- **BossAI GitHub**：https://github.com/liufeng1976
-
-如果你当前就是在做电商客服，最自然的下一步是 **BossAI Ecommerce Manager Skill**；如果你还没确定做什么产品或卖什么，则先看 **BossAI Radar Lite**；如果你已经有商品/内容主题并需要批量做视频，则直接看 **BossAI Video Agent**。
-
-## ✨ 核心功能
-
-- **多平台统一管理结构** — 一个后台组织抖音和淘宝店铺客服数据流
-- **AI 智能回复** — 配置 DeepSeek Key 后调用模型；无 Key 时明确进入本地 Demo fallback
-- **知识库 RAG** — FAQ 知识库增强检索，自动匹配参考答案
-- **Webhook 适配器骨架** — 提供抖音、淘宝/千牛消息入口的示例结构，生产使用需重新核对平台当前协议
-- **轮询处理骨架** — 展示未回复消息批处理流程，真实平台调用需正式权限
-- **浮动客服组件** — 可嵌入页面的 Widget 示例
-- **手动接管** — 支持人工回复入口
-
-## 📁 项目结构
-
-```text
-douyin-taobao-cs/
-├── backend/
-│   ├── server.js          # 主服务入口
-│   ├── adapters/
-│   │   ├── douyin.js      # 抖音电商适配器骨架
-│   │   └── taobao.js      # 淘宝/千牛适配器骨架
-│   ├── ai/
-│   │   └── index.js       # DeepSeek 接线 + 无 Key Demo fallback
-│   ├── knowledge/
-│   │   └── index.js       # 知识库 RAG 检索
-│   ├── middleware/
-│   │   ├── auth.js        # API 认证
-│   │   ├── rateLimit.js   # 限流
-│   │   └── errorHandler.js# 错误处理
-│   └── utils/
-│       ├── logger.js       # 日志
-│       └── store.js        # 店铺存储
-├── frontend/
-│   ├── index.html         # 管理面板
-│   └── app.js             # 面板逻辑
-├── widget/
-│   └── embed.js           # 浮动客服组件
-├── tests/
-│   └── e2e.test.js
-├── scripts/
-│   └── verify-community-demo.mjs
-├── package.json
-└── .env.example
-```
-
-## 🚀 快速开始
-
-### 1. 安装依赖
+要求：Node.js 20+。
 
 ```bash
 git clone https://github.com/liufeng1976/douyin-taobao-cs.git
 cd douyin-taobao-cs
 npm ci
+npm run demo
 ```
 
-### 2. 本地 Demo：不需要平台 API
+`npm run demo` 只使用合成消息和演示密钥：
+
+- 不调用抖音 / 淘宝真实 API；
+- 不需要商家账号；
+- 不联网调用模型；
+- 不发送客户消息；
+- 不退款、不取消、不修改订单。
+
+你会看到两类模拟签名都验证成功，并输出统一的 `bossai.customer-service-connector-envelope.v1`：
+
+```text
+=== Douyin simulated signed webhook ===
+signatureVerified=true
+...
+=== Taobao/Qianniu simulated signed webhook ===
+signatureVerified=true
+...
+=== Demo result ===
+PASS
+```
+
+完整本地验收：
 
 ```bash
-npm start
+npm run check
 ```
 
-打开 `http://localhost:3000`。未配置 `DEEPSEEK_API_KEY` 时，AI 回复会明确标记为本地演示模式，适合查看流程、知识库和界面，不会调用真实 DeepSeek。
+当前 v1.1.0 候选已在最新远端 `main` 基线上验证：
 
-### 3. 可选：配置 DeepSeek
+```text
+20/20 channel-adapter tests passed
+17/17 local E2E passed
+Channel adapter verification passed
+```
+
+## 为什么这个项目值得看
+
+很多 AI 客服示例把平台 API、模型 Key、知识库、自动回复和订单动作全部塞进一个脚本。这样做有三个问题：
+
+1. 没有真实平台 API 就无法运行；
+2. 退款、投诉、改地址等高风险消息也可能被自动处理；
+3. 平台账号、Provider Key、客户数据和业务状态混在一个小服务里，难以治理。
+
+本项目把问题收敛为一个可复用的 **Channel Adapter / Reference Implementation**：
+
+```mermaid
+flowchart LR
+    D[Douyin signed webhook] --> A[Channel Adapter]
+    T[Taobao / Tmall / Qianniu signed webhook] --> A
+    M[Offline synthetic demo] --> A
+    A --> S[Signature verification]
+    S --> N[Normalize + stable idempotency]
+    N --> P[Risk / human-review policy]
+    P --> I[BossAI Customer Service intake]
+    I --> C[Case + facts + knowledge]
+    C --> R[Reviewable draft]
+    R --> H[Human approval]
+    H --> X[Governed external action]
+```
+
+## 已实现能力
+
+### 抖音电商入站
+
+- 保留原始请求体参与签名校验；
+- 支持配置的 `MD5` / `HMAC-SHA256` `event-sign` 模式；
+- 校验回调 `app-id`；
+- 支持数组式消息推送；
+- 优先使用平台消息 ID，没有 ID 时生成稳定、账号隔离的 SHA-256 幂等 ID；
+- canonical intake 接收失败时返回 5xx，不会先 ACK 再静默丢消息；
+- `msg_id=0` 平台探针只 ACK，不创建客户 Case；
+- 直接发送和轮询自动回复已 fail-closed。
+
+### 淘宝 / 天猫 / 千牛入站
+
+- 消息回调按 `HEX(HMAC-SHA256(app_key + raw_body, app_secret))` 校验；
+- 支持常见 OpenIM / 消息字段标准化；
+- TOP 请求使用 HMAC-SHA256 签名和国内网关；
+- Webhook 热路径不查询订单；
+- 可选订单事实读取只保留订单号、状态、支付和商品标题/SKU/数量；
+- 不请求收件人姓名、手机号、详细地址；
+- 直接发送和轮询自动回复已 fail-closed。
+
+### AI 草稿安全边界
+
+本仓库不再持有 `DEEPSEEK_API_KEY`、`OPENAI_API_KEY` 等 Provider 主密钥。
+
+如需模型草稿，只通过 BossAI OS：
+
+```text
+POST <BOSSAI_OS_URL>/v1/chat/completions
+x-bossai-api-key: <customer-level key>
+model: bossai-balanced
+```
+
+只允许 `bossai-*` 公共模型别名。没有 BossAI OS Key 时，使用确定性的本地安全模板，不伪装成真实模型调用。
+
+### 人工审核
+
+这些场景始终是 `human_review_required`：
+
+- 退款 / 退货；
+- 取消或修改订单 / 改地址；
+- 换货 / 补发；
+- 投诉 / 差评 / 赔偿 / 平台争议；
+- 支付 / 账户问题；
+- 法律 / 安全问题；
+- 隐私 / PII 问题。
+
+即使低风险咨询也只生成 **reviewable draft**：
+
+```text
+automaticSendAllowed = false
+externalMutationAllowed = false
+reviewRequired = true
+```
+
+## API-free 与真实 API 的边界
+
+| 能力 | 无真实 API | 后续真实平台可验证 |
+|---|---:|---:|
+| Offline demo | ✅ | ✅ |
+| 签名算法与验证器 | ✅ | ✅ |
+| 消息标准化 | ✅ | ✅ |
+| 幂等 ID | ✅ | ✅ |
+| 风险 / 人工审核策略 | ✅ | ✅ |
+| Connector contracts | ✅ | ✅ |
+| 本地 E2E / CI | ✅ | ✅ |
+| 真实平台回调 | — | ✅ |
+| 真实商家 `accountRef` 绑定 | — | ✅ |
+| 真实客户消息受治理发送 | — | ✅ |
+
+**所以：没有抖音、淘宝 API 不是 GitHub 发布、学习、测试、Star/Fork 或继续开发的阻塞。** 它只阻塞“真实平台已上线”这种生产声明。
+
+## 本地诊断服务
 
 ```bash
 cp .env.example .env
-# 编辑 .env：
-# DEEPSEEK_API_KEY=<your key>
+npm start
 ```
 
-DeepSeek 是第三方服务；使用时受其自己的服务条款、计费和数据规则约束。
+Windows PowerShell：
 
-### 4. 真实平台联调（当前仓库未完成生产验收）
+```powershell
+Copy-Item .env.example .env
+npm start
+```
 
-只有在你已经取得对应平台正式权限后，才配置：
+默认入口：`http://localhost:3000`
+
+`.env.example` 默认关闭真实抖音/淘宝流量，因此没有平台凭据也不会误进入“生产已配置”状态。
+
+常用入口：
+
+| 方法 | 路径 | 作用 |
+|---|---|---|
+| GET | `/health` | 存活与安全摘要，不泄露内部 Intake URL |
+| GET | `/ready` | 真实接流量准备度；配置不完整返回 503 |
+| GET | `/api/integration/status` | 受认证的详细集成状态 |
+| GET | `/api/integration/probe` | 只读检查 canonical Customer Service 与 `accountRef` 品牌绑定 |
+| POST | `/api/chat` | 生成待人工审核草稿 |
+| POST | `/api/policy/evaluate` | 风险分类 |
+| POST | `/api/reply` | 历史兼容入口，固定拒绝直接发送 |
+| POST | `/api/batch-process` | 历史兼容入口，轮询已退役 |
+
+## 与 BossAI 的关系
+
+这个仓库是 **国内电商渠道能力源 / reference implementation**，不是第二套独立客服产品。
+
+生产形态下，标准 Envelope 应进入 canonical BossAI Customer Service：
 
 ```text
-DOUYIN_APP_KEY
-DOUYIN_APP_SECRET
-TAOBAO_APP_KEY
-TAOBAO_APP_SECRET
-TAOBAO_SESSION_KEY
+<BOSSAI_CUSTOMER_SERVICE_URL>/api/connectors/intake
 ```
 
-然后依据平台**当前**官方文档核对 webhook 签名、token、消息发送、订单查询和售后权限。不要直接把仓库中的历史 endpoint/字段假定为当前生产协议。
+由主产品负责品牌路由、Case、事实/知识、草稿、人工审核、History/Audit 和受治理外部执行。
 
-## 📡 本地 API / Demo API
+### 从这个项目继续进入 BossAI 生态
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | /health | 健康检查 |
-| POST | /api/chat | AI / Demo 对话接口 |
-| POST | /api/reply | 手动回复入口；真实平台发送需正式凭据 |
-| POST | /api/batch-process | 批处理入口；真实平台轮询需正式凭据 |
-| GET | /api/shops | 获取店铺列表 |
-| GET | /api/knowledge/:shopId | 获取知识库 |
-| POST | /api/knowledge/:shopId | 添加 FAQ |
-| DELETE | /api/knowledge/:shopId/:docId | 删除 FAQ |
-| POST | /api/webhook/douyin | 抖音 webhook 适配器骨架 |
-| POST | /api/webhook/taobao | 淘宝/千牛 webhook 适配器骨架 |
+| 你的下一步 | BossAI 项目 |
+|---|---|
+| 把客服扩展到选品、运营、内容、销售和项目执行 | [BossAI Ecommerce Manager Skill](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill) |
+| 从公开信号寻找真实痛点和商业机会 | [BossAI Radar Lite](https://github.com/liufeng1976/bossai-radar-lite) |
+| 做 Windows 本地 AI 视频生产 | [BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent) |
+| 复用 BossAI Skills / workflows / local AI foundation | [BossAI OS Core](https://github.com/liufeng1976/bossai-os-core) |
 
-## ✅ 验证
+**BossAI 官网 / 商业授权入口：<https://bossaios.com>**
 
-仓库 CI 使用锁文件安装依赖，启动本地服务，并在**不配置 DeepSeek/抖音/淘宝生产凭据**的情况下运行 E2E Demo 测试：
+## 常用命令
 
 ```bash
-npm run verify:community-demo
-npm start
-# 另一个终端：
-npm test
+npm run demo                       # API-free synthetic demo
+npm test                           # 20 个 connector / policy / signature tests
+npm run test:e2e                  # 17 个真实本地 HTTP 入口 E2E
+npm run verify:channel-adapter    # 架构与治理边界
+npm run verify:public-release     # GitHub 发布与 secret hygiene
+npm run check                     # 全量本地验证
+
+# 只有准备真实平台接入时才需要：
+npm run check:production-readiness
+npm run probe:canonical-integration
 ```
 
-这只能证明公开 Demo 的本地基线，不代表第三方平台生产 API 已验证。
+## 项目结构
 
-## 🛠 技术栈
+```text
+backend/
+  adapters/       Douyin / Taobao inbound adapters
+  contracts/      canonical connector envelope
+  policy/         human-review policy
+  services/       canonical Customer Service bridge
+  config/         production/readiness validation
+connectors/
+  contracts/      versioned connector capability contracts
+examples/
+  offline-demo.js
+frontend/          diagnostic + review-only draft UI
+tests/             connector tests + local E2E
+docs/              architecture / FAQ / roadmap / release guide
+governance/        batch preflight/evidence
+.github/            CI / release / issue / PR automation
+```
 
-- **运行时**: Node.js + Express
-- **AI 模型**: DeepSeek Chat API（可选；无 Key 时进入明确 Demo fallback）
-- **前端**: Vanilla JS
-- **存储**: 内存（可升级为 Prisma + SQLite/PostgreSQL）
+## 版本
 
-## 📄 许可 / License
+- `v1.0.0`：已经发布的 **Community Demo Source Release**，保留历史，不移动、不覆盖。
+- `v1.1.0`：当前安全硬化候选，重点是 API-free signed webhook reference、canonical intake、BossAI OS 草稿边界和 fail-closed external actions。
 
-本仓库采用 **BossAI Community Source License 1.0**：源码公开，个人/非商业免费，商业用途需要 BossAI 授权。它是 source-available 许可证，不应表述为 OSI 认可的开源许可证。
+## 许可 / License
 
-商业授权入口：**https://bossaios.com**
+本仓库继续采用已经发布的 **BossAI Community Source License 1.0**，见 [`LICENSE`](LICENSE)。
 
-第三方平台、SDK、API、商标、数据及凭据继续受各自条款约束。BossAI Community Source License 不授予 DeepSeek、抖音、淘宝、千牛或任何第三方服务的账号、API、数据或商标权利。参见 [`LICENSE`](LICENSE)。
+**Source Available / 源码公开，不是 OSI Open Source。** 个人、教育、研究、评估及其他非商业用途按许可证免费使用；公司经营、代运营、客户服务、SaaS、白标/OEM、收费交付等商业用途需要 BossAI 商业授权。
+
+第三方平台、API、商标、账号和数据仍受各自条款约束。本仓库不会附带抖音、淘宝、千牛或模型 Provider 的生产凭据。
+
+## 贡献与安全
+
+- [Contributing](CONTRIBUTING.md)
+- [Security Policy](SECURITY.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [FAQ](docs/FAQ.md)
+- [Roadmap](docs/ROADMAP.md)
+
+如果这个参考实现对你有帮助，**Star 本仓库**；如果你希望适配更多消息字段或国内平台，请使用**合成数据**提交 Issue，不要公开真实客户 PII 或商家 Secret。

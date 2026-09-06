@@ -1,24 +1,47 @@
 {
   "name": "douyin-taobao-cs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "license": "LicenseRef-BossAI-Community-Source-1.0",
-  "description": "AI 自动客服社区演示项目 — 抖音电商 & 淘宝/千牛集成骨架、DeepSeek 与 RAG",
+  "author": "刘风 / 大星链跨境电子商务有限公司 (BossAI)",
+  "description": "API-free BossAI reference implementation for Douyin/Taobao/Tmall/Qianniu customer-service webhook normalization, safety policy and governed intake.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liufeng1976/douyin-taobao-cs.git"
+  },
+  "homepage": "https://github.com/liufeng1976/douyin-taobao-cs#readme",
+  "bugs": {
+    "url": "https://github.com/liufeng1976/douyin-taobao-cs/issues"
+  },
+  "keywords": [
+    "bossai",
+    "douyin",
+    "taobao",
+    "tmall",
+    "qianniu",
+    "customer-service",
+    "webhook",
+    "ecommerce",
+    "ai-agent",
+    "human-in-the-loop",
+    "connector",
+    "china-ecommerce"
+  ],
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
-    "test": "node tests/e2e.test.js",
-    "verify:community-demo": "node scripts/verify-community-demo.mjs"
+    "demo": "node examples/offline-demo.js",
+    "test": "node tests/channel-adapter.test.js",
+    "test:e2e": "node tests/e2e.test.js",
+    "verify:channel-adapter": "node scripts/verify-channel-adapter.js",
+    "verify:public-release": "node scripts/verify-public-release.js",
+    "verify:release-candidate": "node scripts/verify-release-candidate.js",
+    "verify:community-demo": "npm run verify:public-release",
+    "check:production-readiness": "node scripts/check-production-readiness.js",
+    "probe:canonical-integration": "node scripts/probe-canonical-integration.js",
+    "check": "npm test && npm run verify:channel-adapter && npm run verify:public-release && npm run test:e2e"
   },
-  "dependencies": {
-    "@prisma/client": "^6.0.0",
-    "express": "^4.21.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "axios": "^1.7.0",
-    "crypto-js": "^4.2.0"
-  },
-  "devDependencies": {
-    "prisma": "^6.0.0"
+  "engines": {
+    "node": ">=20"
   }
 }

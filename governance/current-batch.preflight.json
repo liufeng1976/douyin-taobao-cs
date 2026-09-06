@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "project": "douyin-taobao-cs",
+  "batch": "public-source-channel-hardening-v1.1.0-2026-09-06",
+  "highestCommercialGoal": "Turn the existing public GitHub traffic entry into a trustworthy API-free BossAI domestic ecommerce customer-service connector reference that routes qualified users toward the BossAI ecosystem without claiming unavailable marketplace production access.",
+  "largestUserGap": "The published v1.0.0 Community Demo still presents legacy direct-provider, auto-reply, polling and widget concepts that no longer match the governed BossAI customer-service architecture.",
+  "userProblem": "A developer or merchant evaluating BossAI needs a runnable Douyin/Taobao reference without merchant API credentials, with clear safety boundaries and a credible path into canonical BossAI Customer Service.",
+  "userVisibleChange": "Visitors can run a synthetic signed-webhook demo with no real platform API, inspect canonical connector envelopes and human-review rules, and use a diagnostic UI that never claims automatic customer actions.",
+  "scope": [
+    "API-free synthetic Douyin/Taobao signed-webhook demo",
+    "signed inbound channel normalization and stable idempotency",
+    "minimal-data connector contracts",
+    "canonical BossAI Customer Service intake bridge",
+    "BossAI OS review-only bounded drafting",
+    "mandatory human-review and fail-closed external-action policy",
+    "liveness/readiness and read-only integration diagnostics",
+    "public-source GitHub CI, docs, security and lead-generation positioning"
+  ],
+  "outOfScope": [
+    "claiming real Douyin/Taobao merchant API authorization",
+    "automatic customer-message sending",
+    "refund, cancellation, replacement, compensation or order/account mutation",
+    "creating another Agent Runtime, approval authority or customer-service state authority",
+    "moving or overwriting the existing v1.0.0 tag/release"
+  ],
+  "capabilityClassification": "tool-channel-adapter-plus-bounded-ai-assistant",
+  "realEntryAcceptance": [
+    "npm run demo succeeds with synthetic credentials and no external network call",
+    "npm test passes connector/policy/signature/idempotency/data-minimization tests",
+    "npm run test:e2e passes the local HTTP entry, signed callbacks, canonical intake stub and fail-closed external-action tests",
+    "npm run verify:channel-adapter confirms BossAI OS/canonical customer-service authority boundaries",
+    "npm run verify:public-release confirms public-source metadata, license, CI and secret hygiene",
+    "git diff --check reports no whitespace errors"
+  ],
+  "machineChecks": [
+    "npm run demo",
+    "npm test",
+    "npm run test:e2e",
+    "npm run verify:channel-adapter",
+    "npm run verify:public-release"
+  ],
+  "targetCompletionLevel": 2,
+  "completionClaim": "L2 public-source connector reference candidate; suitable for GitHub source publication after remote merge/release checks, but not live-platform or production deployment attestation."
+}

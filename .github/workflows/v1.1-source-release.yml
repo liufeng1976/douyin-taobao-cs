@@ -1,0 +1,85 @@
+name: v1.1 Public Source Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/release-requests/v1.1.0.json'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify API-free demo and public-source boundaries
+        run: |
+          npm run demo
+          npm run check
+          npm run verify:release-candidate
+      - name: Resolve governed release request
+        id: request
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const pkg = require('./package.json');
+          const req = JSON.parse(fs.readFileSync('.github/release-requests/v1.1.0.json', 'utf8'));
+          const license = 'LicenseRef-BossAI-Community-Source-1.0';
+          if (req.schemaVersion !== 'bossai.community-demo-release-request.v1') throw new Error('Unexpected release schema.');
+          if (pkg.version !== '1.1.0' || req.version !== pkg.version || req.tag !== `v${pkg.version}`) throw new Error('v1.1.0 version/tag mismatch.');
+          if (pkg.license !== license || req.license !== license) throw new Error('License identity changed.');
+          if (req.sourceOnly !== true || req.productionPlatformApiValidated !== false || req.signedBinaryIncluded !== false) throw new Error('Release truth boundary violated.');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `tag=${req.tag}\n`);
+          NODE
+      - name: Create immutable source tag
+        env:
+          TAG: ${{ steps.request.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags origin
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists; refusing to move or overwrite it."
+            exit 1
+          fi
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "$TAG"
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.request.outputs.tag }}
+        shell: bash
+        run: |
+          cat > /tmp/release-notes.md <<'NOTES'
+          # douyin-taobao-cs v1.1.0 — API-free Connector Reference
+
+          Hardened public-source release for Douyin/Taobao/Tmall/Qianniu customer-service connector patterns.
+
+          ## Validated locally and in CI
+          - API-free synthetic signed-webhook demo;
+          - 20 connector/signature/policy/idempotency/data-minimization tests;
+          - 17 local HTTP E2E scenarios;
+          - canonical BossAI Customer Service intake contract;
+          - review-only BossAI OS drafting boundary;
+          - direct sends/refunds/order mutations fail closed.
+
+          ## Not claimed
+          - no real Douyin/Taobao merchant production API access is included or validated;
+          - no merchant secret, platform token or customer PII is included;
+          - no hosted SaaS or signed production binary is included.
+
+          Existing v1.0.0 remains immutable release history.
+          Commercial entry: https://bossaios.com
+          NOTES
+          gh release create "$TAG" --title "douyin-taobao-cs v1.1.0 — API-free Connector Reference" --notes-file /tmp/release-notes.md --verify-tag

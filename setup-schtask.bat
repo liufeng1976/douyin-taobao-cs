@@ -1,4 +1,6 @@
 @echo off
-REM 配置 Windows 定时任务: 每分钟调用 AI 客服批量处理
-schtasks /create /tn "AI-CustomerService-Batch" /tr "node %USERPROFILE%\Projects\douyin-taobao-cs\backend\batch-cron.js" /sc minute /mo 1 /f
-echo 定时任务已创建: AI-CustomerService-Batch (每分钟执行)
+REM Legacy polling installer retired: signed webhooks/message service now drive intake.
+echo [douyin-taobao-cs] No scheduled task was created.
+echo Use Douyin/Taobao signed callbacks and BossAI Customer Service connector intake.
+echo If an old AI-CustomerService-Batch task already exists, review and remove it manually after confirming it is no longer needed.
+exit /b 0

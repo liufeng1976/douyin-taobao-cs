@@ -1,228 +1,239 @@
 /**
- * 淘宝 / 千牛适配器
+ * Taobao / Tmall / Qianniu inbound customer-service channel adapter.
  *
- * 对接淘宝开放平台千牛客服消息 API
- * 文档: https://open.taobao.com/api.htm
- *
- * 功能:
- *  1. 接收千牛推送的买家消息
- *  2. 轮询待回复消息
- *  3. AI 自动回复
- *  4. 订单查询辅助
+ * Inbound messages are verified/normalized and forwarded to the canonical
+ * BossAI Customer Service connector intake contract. This workspace keeps
+ * read-only marketplace fact helpers but does not automatically send replies.
  */
 
-const axios = require('axios');
 const crypto = require('crypto');
-const { logInfo, logError } = require('../utils/logger');
+const { logInfo, logError, logWarn } = require('../utils/logger');
+const { buildEnvelope, minimalOrderFacts } = require('../contracts/customerServiceIntake');
+const customerServiceBridge = require('../services/customerServiceBridge');
+const { evaluateMessage } = require('../policy/responsePolicy');
 
-const TAOBAO_API = 'https://eco.taobao.com/router/rest';
+const TAOBAO_API = process.env.TAOBAO_API_URL || 'https://gw.api.taobao.com/router/rest';
+
+function safeEqualText(a, b) {
+  const left = Buffer.from(String(a || '').trim().toLowerCase());
+  const right = Buffer.from(String(b || '').trim().toLowerCase());
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
+}
 
 /**
- * 淘宝/千牛消息 webhook 处理
+ * Alibaba message-service signature:
+ * Authorization = HEX(HMAC-SHA256(app_key + raw_body, app_secret)).
+ * Raw body must remain byte-for-byte unchanged before verification.
  */
+function createTaobaoWebhookSign(body, appKey, secret) {
+  if (!appKey || !secret) return null;
+  return crypto.createHmac('sha256', secret).update(`${appKey}${body}`, 'utf8').digest('hex');
+}
+
+function verifyTaobaoWebhookSign(body, authorization, appKey = process.env.TAOBAO_APP_KEY, secret = process.env.TAOBAO_APP_SECRET) {
+  if (!authorization || !appKey || !secret) return false;
+  const provided = String(authorization).replace(/^HMAC-SHA256\s+/i, '').trim();
+  const expected = createTaobaoWebhookSign(body, appKey, secret);
+  return Boolean(expected) && safeEqualText(provided, expected);
+}
+
+function parseMaybeJson(value) {
+  if (value && typeof value === 'object') return value;
+  const text = String(value || '').trim();
+  if (!text) return {};
+  try { return JSON.parse(text); } catch { return { content: text }; }
+}
+
+function unwrapPayload(payload) {
+  const outer = parseMaybeJson(payload);
+  for (const key of ['message', 'data', 'content', 'body']) {
+    const value = outer?.[key];
+    if (value && typeof value === 'string' && /^[\[{]/.test(value.trim())) {
+      const parsed = parseMaybeJson(value);
+      if (parsed && typeof parsed === 'object') return { ...outer, ...parsed };
+    }
+  }
+  return outer;
+}
+
+function toIsoTimestamp(value) {
+  if (!value) return new Date().toISOString();
+  const numeric = Number(value);
+  if (Number.isFinite(numeric)) {
+    const millis = numeric < 1000000000000 ? numeric * 1000 : numeric;
+    const date = new Date(millis);
+    if (!Number.isNaN(date.getTime())) return date.toISOString();
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
+
+function normalizeTaobaoMessage(payload, rawBody) {
+  const data = unwrapPayload(payload);
+  const content = data.content && typeof data.content === 'object'
+    ? data.content.text || data.content.content || data.content.message
+    : data.content;
+  const message = String(data.message || data.text || content || '').trim();
+  if (!message) return null;
+
+  const accountRef = String(
+    process.env.TAOBAO_ACCOUNT_REF || data.shop_id || data.shopId || data.to_id || data.seller_nick || ''
+  ).trim();
+  const customerReferenceId = String(
+    data.buyer_nick || data.from_id || data.customer_id || data.customerId || data.user_id || ''
+  ).trim();
+  const policy = evaluateMessage(message);
+  const orderId = data.tid || data.order_id || data.orderId || null;
+
+  return buildEnvelope({
+    channel: String(process.env.TAOBAO_CHANNEL || 'taobao').toLowerCase() === 'tmall' ? 'tmall' : 'taobao',
+    accountRef,
+    sourceMessageId: data.msg_id || data.msgId || data.message_id || data.id,
+    rawBody,
+    customerReferenceId,
+    customerName: data.nickname || data.buyer_nick || data.customer_name || 'Customer',
+    subject: data.subject || 'Taobao/Qianniu customer message',
+    message,
+    receivedAt: toIsoTimestamp(data.gmt_send || data.timestamp || data.create_time || data.time),
+    intent: policy.reasons[0] || 'GENERAL_SUPPORT',
+    orderId,
+    order: data.order || (orderId ? { orderId } : null),
+    cursor: data.msg_id || data.msgId || null,
+  });
+}
+
+async function routeMessage(payload, rawBody, bridgeOptions = {}) {
+  const envelope = normalizeTaobaoMessage(payload, rawBody);
+  if (!envelope) {
+    logInfo({ module: 'taobao', event: 'webhook_non_customer_message_ignored' });
+    return { routed: false, reason: 'NO_CUSTOMER_TEXT' };
+  }
+
+  // Keep callback routing fast and deterministic. Order facts are enriched later
+  // through an explicit read-only action, never inside the callback acknowledgement path.
+  const result = await customerServiceBridge.submitEnvelope(envelope, bridgeOptions);
+  logInfo({
+    module: 'taobao',
+    event: 'customer_message_routed',
+    sourceMessageId: envelope.sourceMessageId,
+    delivered: result.delivered,
+    reason: result.reason || null,
+  });
+  return { routed: result.delivered, envelope, bridge: result };
+}
+
 async function handleWebhook(req) {
-  const body = req.body.toString('utf-8');
+  const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : String(req.body || '');
+  const authorization = req.headers.authorization || (process.env.NODE_ENV !== 'production' ? req.headers['x-taobao-sign'] : '');
+  const requireSignature = process.env.NODE_ENV === 'production' || process.env.REQUIRE_SIGNED_WEBHOOKS === 'true';
+
+  if ((authorization || requireSignature) && !verifyTaobaoWebhookSign(rawBody, authorization)) {
+    const error = new Error('Taobao webhook signature verification failed.');
+    error.status = 401;
+    error.code = 'TAOBAO_WEBHOOK_SIGNATURE_INVALID';
+    throw error;
+  }
+
   let payload;
-
   try {
-    // 淘宝 webhook 可能用 form 或 JSON
-    if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-      const qs = require('querystring');
-      payload = qs.parse(body);
+    const contentType = String(req.headers['content-type'] || '');
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      payload = Object.fromEntries(new URLSearchParams(rawBody));
     } else {
-      payload = JSON.parse(body);
+      payload = JSON.parse(rawBody || '{}');
     }
-
-    // 消息类型判断
-    const msgType = payload.type || payload.msg_type;
-
-    logInfo({ module: 'taobao', event: 'webhook_received', type: msgType });
-
-    if (msgType === 'message' || msgType === 'im_message') {
-      // 收到买家消息 → 异步处理
-      setImmediate(() => handleBuyerMessage(payload));
-    }
-
-    return { code: 0, msg: 'success' };
-  } catch (err) {
-    logError({ module: 'taobao', event: 'webhook_error', error: err.message });
-    return { code: 1, msg: '处理失败' };
+  } catch (error) {
+    error.status = 400;
+    error.code = 'TAOBAO_WEBHOOK_BODY_INVALID';
+    throw error;
   }
+
+  logInfo({ module: 'taobao', event: 'webhook_received' });
+  const bridgeTimeoutMs = Number(process.env.WEBHOOK_BRIDGE_TIMEOUT_MS || 120);
+  const result = await routeMessage(payload, rawBody, { retries: 0, timeoutMs: bridgeTimeoutMs });
+  if (result.reason !== 'NO_CUSTOMER_TEXT' && !result.routed) {
+    const error = new Error(`Canonical customer-service intake unavailable: ${result.bridge?.reason || 'delivery failed'}`);
+    error.status = 503;
+    error.code = 'CANONICAL_CUSTOMER_SERVICE_INTAKE_UNAVAILABLE';
+    throw error;
+  }
+  return { code: 0, msg: 'success' };
 }
 
-/**
- * 处理买家消息
- */
-async function handleBuyerMessage(data) {
-  try {
-    const {
-      buyer_nick: customerId,
-      content: message,
-      tid: orderId,
-      shop_id: shopId,
-    } = data;
-
-    const ai = require('../ai');
-    const kb = require('../knowledge');
-
-    // 如果有关联订单，先查订单信息
-    let orderContext = null;
-    if (orderId) {
-      orderContext = await getOrderInfo(orderId);
-    }
-
-    const kbContext = await kb.search(shopId, message);
-
-    const reply = await ai.generateReply({
-      message,
-      platform: 'taobao',
-      customerId,
-      shopId,
-      kbContext,
-      orderContext,
-    });
-
-    if (reply) {
-      await sendMessage(shopId, customerId, reply);
-    }
-  } catch (err) {
-    logError({ module: 'taobao', event: 'handle_message_error', error: err.message });
-  }
+async function sendMessage() {
+  const error = new Error('Direct Taobao customer-message sending is disabled in this source workspace. Approve and send through the canonical BossAI Customer Service workflow.');
+  error.status = 409;
+  error.code = 'DIRECT_CHANNEL_SEND_DISABLED';
+  throw error;
 }
 
-/**
- * 发送消息给买家
- *
- * 千牛发送消息 API: taobao.openim.messages.send
- */
-async function sendMessage(shopId, customerId, content) {
-  try {
-    const params = buildTaobaoParams({
-      method: 'taobao.openim.messages.send',
-      to_users: JSON.stringify([customerId]),
-      msg_content: JSON.stringify({
-        msg_type: 'text',
-        text: { text: content },
-      }),
-    });
-
-    const res = await axios.post(TAOBAO_API, null, { params });
-    logInfo({ module: 'taobao', event: 'send_msg', customerId });
-    return res.data;
-  } catch (err) {
-    logError({ module: 'taobao', event: 'send_msg_error', error: err.message });
-    throw err;
-  }
-}
-
-/**
- * 轮询待回复消息并自动回复
- */
 async function pollAndReply() {
-  try {
-    const messages = await getUnrepliedMessages();
-    if (!messages || messages.length === 0) return { processed: 0 };
-
-    const ai = require('../ai');
-    const kb = require('../knowledge');
-    let processed = 0;
-
-    for (const msg of messages) {
-      try {
-        const kbContext = await kb.search(msg.shop_id || 'default', msg.content);
-        const reply = await ai.generateReply({
-          message: msg.content,
-          platform: 'taobao',
-          customerId: msg.buyer_nick,
-          shopId: msg.shop_id || 'default',
-          kbContext,
-        });
-
-        if (reply) {
-          await sendMessage(msg.shop_id || 'default', msg.buyer_nick, reply);
-          processed++;
-        }
-      } catch (e) {
-        logError({ module: 'taobao', event: 'poll_reply_error', error: e.message });
-      }
-    }
-
-    logInfo({ module: 'taobao', event: 'poll_complete', processed, total: messages.length });
-    return { processed, total: messages.length };
-  } catch (err) {
-    logError({ module: 'taobao', event: 'poll_error', error: err.message });
-    return { processed: 0, error: err.message };
-  }
+  logWarn({ module: 'taobao', event: 'polling_retired', reason: 'USE_SIGNED_MESSAGE_SERVICE_WEBHOOK' });
+  return {
+    processed: 0,
+    supported: false,
+    reason: 'POLLING_RETIRED_USE_SIGNED_WEBHOOK',
+    automaticExternalActions: false,
+  };
 }
 
-/**
- * 获取未回复消息列表
- */
-async function getUnrepliedMessages() {
-  try {
-    const params = buildTaobaoParams({
-      method: 'taobao.openim.messages.search',
-      start_time: new Date(Date.now() - 3600000).toISOString(),
-      end_time: new Date().toISOString(),
-      page_no: '1',
-      page_size: '50',
-    });
-
-    const res = await axios.post(TAOBAO_API, null, { params });
-    const list = res.data?.openim_messages_search_response?.messages?.message || [];
-    return list;
-  } catch (err) {
-    logError({ module: 'taobao', event: 'get_unread_error', error: err.message });
-    return [];
-  }
+function taobaoTimestamp(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+  }).formatToParts(date).reduce((acc, part) => ({ ...acc, [part.type]: part.value }), {});
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
 
-/**
- * 获取订单信息
- */
-async function getOrderInfo(orderId) {
+function buildTaobaoParams(apiParams, options = {}) {
+  const appKey = String(options.appKey ?? process.env.TAOBAO_APP_KEY ?? '').trim();
+  const secret = String(options.secret ?? process.env.TAOBAO_APP_SECRET ?? '').trim();
+  const session = String(options.session ?? process.env.TAOBAO_SESSION_KEY ?? '').trim();
+  if (!appKey || !secret) throw new Error('TAOBAO_APP_KEY and TAOBAO_APP_SECRET are required.');
+
+  const allParams = {
+    method: apiParams.method,
+    app_key: appKey,
+    ...(session ? { session } : {}),
+    timestamp: options.timestamp || taobaoTimestamp(),
+    format: 'json',
+    v: '2.0',
+    sign_method: 'hmac-sha256',
+    ...apiParams,
+  };
+
+  const signStr = Object.keys(allParams)
+    .filter((key) => key !== 'sign' && allParams[key] !== undefined && allParams[key] !== null)
+    .sort()
+    .map((key) => `${key}${allParams[key]}`)
+    .join('');
+  const sign = crypto.createHmac('sha256', secret).update(signStr, 'utf8').digest('hex').toUpperCase();
+  return { ...allParams, sign };
+}
+
+async function getOrderInfo(orderId, options = {}) {
+  if (!orderId) return null;
   try {
     const params = buildTaobaoParams({
       method: 'taobao.trade.fullinfo.get',
-      tid: orderId,
-      fields: 'tid,status,payment,buyer_nick,orders.title,orders.price,orders.num,receiver_name,receiver_mobile,receiver_state,receiver_city,receiver_district,receiver_address',
-    });
-
-    const res = await axios.post(TAOBAO_API, null, { params });
-    return res.data?.trade_fullinfo_get_response?.trade || null;
-  } catch {
+      tid: String(orderId),
+      fields: 'tid,status,payment,orders.title,orders.sku_id,orders.num',
+    }, options);
+    const url = new URL(options.apiUrl || TAOBAO_API);
+    for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
+    const fetchImpl = options.fetchImpl || globalThis.fetch;
+    const response = await fetchImpl(url, { method: 'POST', signal: AbortSignal.timeout(Number(options.timeoutMs || 8000)) });
+    if (!response.ok) throw new Error(`Taobao order facts request failed: HTTP ${response.status}`);
+    const payload = await response.json();
+    return minimalOrderFacts(payload?.trade_fullinfo_get_response?.trade || null);
+  } catch (error) {
+    logError({ module: 'taobao', event: 'order_fact_read_error', orderId: String(orderId), error: error.message });
     return null;
   }
 }
 
-// --- 淘宝 API 签名 ---
-function buildTaobaoParams(apiParams) {
-  const publicParams = {
-    method: apiParams.method,
-    app_key: process.env.TAOBAO_APP_KEY,
-    session: process.env.TAOBAO_SESSION_KEY,
-    timestamp: new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14),
-    format: 'json',
-    v: '2.0',
-    sign_method: 'hmac-sha256',
-  };
-
-  // 合并参数
-  const allParams = { ...publicParams, ...apiParams };
-  delete allParams.method; // method 不参与签名
-
-  // 排序
-  const sortedKeys = Object.keys(allParams).sort();
-  const signStr = sortedKeys.map(k => `${k}${allParams[k]}`).join('');
-
-  // HMAC-SHA256 签名
-  const sign = crypto
-    .createHmac('sha256', process.env.TAOBAO_APP_SECRET)
-    .update(signStr)
-    .digest('hex')
-    .toUpperCase();
-
-  return { ...publicParams, ...apiParams, sign };
+async function getUnrepliedMessages() {
+  return [];
 }
 
 module.exports = {
@@ -230,4 +241,11 @@ module.exports = {
   sendMessage,
   pollAndReply,
   getOrderInfo,
+  getUnrepliedMessages,
+  verifyTaobaoWebhookSign,
+  createTaobaoWebhookSign,
+  normalizeTaobaoMessage,
+  routeMessage,
+  buildTaobaoParams,
+  taobaoTimestamp,
 };

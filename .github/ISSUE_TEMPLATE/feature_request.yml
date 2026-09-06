@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose a connector, fixture, safety or documentation improvement.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: "Use synthetic examples only. Do not submit real merchant credentials or customer PII."
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options: [Webhook compatibility, New synthetic fixture, Data minimization, Human-review policy, Canonical intake, Diagnostics, Documentation, CI/release, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Keep the proposal inside the channel-adapter/reference boundary.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary check
+      options:
+        - label: This does not require automatic customer sends/refunds/order mutations.
+          required: true
+        - label: I have not included real merchant secrets or customer PII.
+          required: true

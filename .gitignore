@@ -7,3 +7,4 @@ prisma/test.db
 __pycache__/
 .vscode/
 .idea/
+nul
