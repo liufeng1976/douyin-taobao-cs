@@ -10,7 +10,7 @@
 
 > 这是 BossAI 的公开 source-available 技术与获客项目，不声称已经获得抖音/淘宝生产 API 权限，也不把自动回复、退款或订单修改伪装成已上线能力。
 
-[English README](README_EN.md) · [BossAI 官网](https://bossaios.com) · [v1.0.0 Community Demo Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0)
+[English README](README_EN.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [3 分钟体验后反馈](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI 官网](https://bossaios.com)
 
 ## 3 分钟跑起来
 
@@ -50,7 +50,7 @@ PASS
 npm run check
 ```
 
-当前 v1.1.0 候选已在最新远端 `main` 基线上验证：
+当前 `v1.1.0` 已正式发布，并在 GitHub Actions 与本地验收中验证：
 
 ```text
 20/20 channel-adapter tests passed
@@ -156,6 +156,8 @@ reviewRequired = true
 | 真实客户消息受治理发送 | — | ✅ |
 
 **所以：没有抖音、淘宝 API 不是 GitHub 发布、学习、测试、Star/Fork 或继续开发的阻塞。** 它只阻塞“真实平台已上线”这种生产声明。
+
+跑完 `npm run demo` 后，如果你希望继续验证真实平台接线、提交兼容性样本或讨论 BossAI 商业接入，可以直接使用 [Community Demo Feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml)。不要在 Issue 中粘贴真实 App Secret、Token、Cookie 或客户 PII。
 
 ## 本地诊断服务
 

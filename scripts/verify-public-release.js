@@ -29,6 +29,7 @@ const readmeEn = read('README_EN.md');
 const license = read('LICENSE');
 const gitignore = read('.gitignore');
 const ci = read('.github/workflows/ci.yml');
+const release10 = read('.github/workflows/source-release.yml');
 const release11 = read('.github/workflows/v1.1-source-release.yml');
 const request10 = JSON.parse(read('.github/release-requests/v1.0.0.json'));
 const request11 = JSON.parse(read('.github/release-requests/v1.1.0.json'));
@@ -49,11 +50,16 @@ expect(gitignore.split(/\r?\n/).includes('.env'), '.env must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('logs/'), 'logs/ must be ignored.');
 expect(gitignore.split(/\r?\n/).includes('nul'), 'Windows nul artifact must be ignored.');
 expect(/node: \[20, 22\]/.test(ci), 'CI must cover Node 20 and 22.');
+expect(/actions\/checkout@v7/.test(ci) && /actions\/setup-node@v7/.test(ci), 'CI must use Node 24-compatible GitHub JavaScript actions.');
 expect(/npm run demo/.test(ci) && /npm run check/.test(ci), 'CI must run API-free demo and full verification.');
 expect(request10.tag === 'v1.0.0', 'Existing v1.0.0 release request must remain present.');
 expect(request11.tag === 'v1.1.0' && request11.version === '1.1.0', 'v1.1.0 release request mismatch.');
 expect(request11.license === pkg.license && request11.sourceOnly === true && request11.productionPlatformApiValidated === false, 'v1.1.0 release truth boundary mismatch.');
-expect(/Tag \$TAG already exists; refusing to move or overwrite it/.test(release11), 'v1.1 release workflow must refuse to move an existing tag.');
+expect(/preserving it without movement/.test(release11), 'v1.1 release workflow must preserve an existing immutable tag without movement.');
+expect(/if: steps\.immutable_state\.outputs\.exists == 'false'/.test(release11), 'v1.1 release workflow may create tag/release only when the immutable tag is absent.');
+expect(/gh release view \"\$TAG\"/.test(release11), 'v1.1 maintenance path must verify the existing GitHub Release.');
+expect(/actions\/checkout@v7/.test(release10) && /actions\/setup-node@v7/.test(release10), 'v1.0 historical release workflow must use Node 24-compatible GitHub JavaScript actions.');
+expect(/actions\/checkout@v7/.test(release11) && /actions\/setup-node@v7/.test(release11), 'v1.1 release workflow must use Node 24-compatible GitHub JavaScript actions.');
 expect(/Existing v1\.0\.0 remains immutable release history/.test(release11), 'v1.1 release notes must preserve v1.0.0 history.');
 
 try {
