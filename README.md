@@ -4,6 +4,9 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/network/members)
+[![License](https://img.shields.io/badge/license-BossAI%20Community%20Source-orange)](LICENSE)
+
+**许可状态：Source Available / 源码公开，不是 OSI Open Source。** 个人、教育、研究、评估及其他非商业用途免费；公司经营、代运营、客户服务、收费交付、SaaS、白标/OEM 或其他商业用途需要 BossAI 商业授权。完整条款见 [`LICENSE`](LICENSE)。
 
 如果这个项目对你有帮助，欢迎 **Star**。这会帮助更多做抖音、淘宝、千牛、电商客服和 AI 自动化的人发现它。
 
@@ -110,7 +113,7 @@ https://your-domain.com/api/webhook/taobao
 | POST | /api/knowledge/:shopId | 添加 FAQ |
 | DELETE | /api/knowledge/:shopId/:docId | 删除 FAQ |
 | POST | /api/webhook/douyin | 抖音消息 webhook |
-| POST | /api/webhook/taobao | 淘宝消息 webhook |
+| POST | /api/webhook/taobao | 淘宝千牛消息 webhook |
 
 ## 🔧 定时任务配置
 
@@ -126,3 +129,9 @@ https://your-domain.com/api/webhook/taobao
 - **AI 模型**: DeepSeek Chat API
 - **前端**: Vanilla JS (轻量无框架)
 - **存储**: 内存 (可升级为 Prisma + SQLite/PostgreSQL)
+
+## 📄 许可 / License
+
+本仓库采用 **BossAI Community Source License 1.0**：源码公开，个人/非商业免费，商业用途需要 BossAI 授权。它是 source-available 许可证，不应表述为 OSI 认可的开源许可证。
+
+第三方平台、SDK、API、商标、数据及凭据继续受各自条款约束。参见 [`LICENSE`](LICENSE)。
