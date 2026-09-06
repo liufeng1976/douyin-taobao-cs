@@ -76,4 +76,12 @@ if (!douyinSignatureVerified || !taobaoSignatureVerified) {
   process.exitCode = 1;
 } else {
   console.log('PASS: both synthetic webhook signatures verified; no real Douyin/Taobao API, merchant credential, customer message send, refund, order mutation, or external network call was used.');
+
+  heading('Next BossAI step');
+  console.log('Continue from channel/customer-service intake into governed ecommerce execution with BossAI Ecommerce Manager:');
+  console.log('https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill');
+  console.log('Run in that repository: npm test && npm run demo');
+  console.log('Then share privacy-safe trial feedback here:');
+  console.log('https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill/issues/new?template=douyin_connector_handoff.yml');
+  console.log('This demo does not automatically clone another repository, make network requests, send telemetry, transfer customer data/credentials, or grant commercial authorization.');
 }
