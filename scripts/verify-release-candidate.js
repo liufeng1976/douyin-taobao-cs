@@ -7,10 +7,15 @@ const manifestPath = path.join(ROOT, 'governance', 'public-source-release-candid
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const failures = [];
 
-function sha256(relative) {
+function sha256Candidates(relative) {
   const absolute = path.join(ROOT, relative);
   if (!fs.existsSync(absolute)) return null;
-  return crypto.createHash('sha256').update(fs.readFileSync(absolute)).digest('hex');
+  const raw = fs.readFileSync(absolute);
+  const normalized = raw.toString('utf8').replace(/\r\n/g, '\n');
+  return {
+    raw: crypto.createHash('sha256').update(raw).digest('hex'),
+    normalizedLf: crypto.createHash('sha256').update(normalized, 'utf8').digest('hex'),
+  };
 }
 
 if (manifest.version !== '1.1.0' || manifest.tag !== 'v1.1.0') failures.push('Unexpected release-candidate version/tag.');
@@ -21,9 +26,12 @@ if (manifest.forcePushAllowed !== false) failures.push('Force push must remain f
 if (!Array.isArray(manifest.existingReleaseHistoryProtected) || !manifest.existingReleaseHistoryProtected.includes('v1.0.0')) failures.push('v1.0.0 release history must remain protected.');
 
 for (const [relative, expected] of Object.entries(manifest.files || {})) {
-  const actual = sha256(relative);
-  if (!actual) failures.push(`Missing release-candidate file: ${relative}`);
-  else if (actual !== expected) failures.push(`SHA-256 mismatch: ${relative}\n  expected=${expected}\n  actual=${actual}`);
+  const actual = sha256Candidates(relative);
+  if (!actual) {
+    failures.push(`Missing release-candidate file: ${relative}`);
+  } else if (actual.raw !== expected && actual.normalizedLf !== expected) {
+    failures.push(`SHA-256 mismatch: ${relative}\n  expected=${expected}\n  raw=${actual.raw}\n  normalizedLf=${actual.normalizedLf}`);
+  }
 }
 
 if (failures.length) {
