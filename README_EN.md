@@ -4,7 +4,7 @@ An **API-free, source-available reference implementation** for Douyin Shop, Taob
 
 > You do not need a real Douyin or Taobao merchant API account to clone, run, test or understand this repository.
 
-[中文 README](README.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [3-minute demo feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI website](https://bossaios.com)
+[中文 README](README.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [60-second feedback / integration question](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI website](https://bossaios.com)
 
 ## Quick start
 
@@ -18,6 +18,8 @@ npm run demo
 ```
 
 The demo uses only synthetic messages and demo secrets. It does not call real marketplace APIs, contact customers, mutate orders, refund money, or make external network requests.
+
+After the demo—or if you have an integration question—use the [60-second Community Demo Feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml). Do not include marketplace credentials or customer data.
 
 Full local verification:
 
