@@ -125,6 +125,9 @@ app.post('/api/knowledge/:shopId', authMiddleware.authenticate, async (req, res,
 
 app.delete('/api/knowledge/:shopId/:docId', authMiddleware.authenticate, async (req, res, next) => {
   try {
+    if (req.shopId && req.params.shopId !== req.shopId) {
+      return res.status(403).json({ error: '无权访问该店铺资源' });
+    }
     await knowledgeBase.remove(req.params.shopId, req.params.docId);
     res.json({ ok: true });
   } catch (err) { next(err); }
