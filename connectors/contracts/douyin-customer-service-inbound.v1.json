@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "bossai.tool-connector-extraction.v1",
+  "id": "douyin.customer-service.inbound",
+  "classification": "TOOL",
+  "provider": "Douyin Shop Open Platform",
+  "sourceRepository": "douyin-taobao-cs",
+  "sourceFiles": [
+    "backend/adapters/douyin.js",
+    "backend/contracts/customerServiceIntake.js",
+    "backend/services/customerServiceBridge.js"
+  ],
+  "access": "inbound-read",
+  "capabilities": [
+    "webhook.signature.verify",
+    "customer-message.inbound.normalize",
+    "customer-message.inbound.route"
+  ],
+  "businessMutationAllowed": false,
+  "customerMessageSendAllowed": false,
+  "refundAllowed": false,
+  "cancelAllowed": false,
+  "orderMutationAllowed": false,
+  "accountMutationAllowed": false,
+  "upstreamModelProviderKeyAllowed": false,
+  "governance": {
+    "toolGovernanceAuthority": "bossai-os",
+    "customerServiceConsumer": "bossai-commerce.customer-service",
+    "workflowApprovalAuthority": "canonical-bossai-customer-service-human-review"
+  },
+  "outputContract": {
+    "schema": "bossai.customer-service-connector-envelope.v1",
+    "idempotencyRequired": true,
+    "minimalCustomerData": true,
+    "externalActionReceipt": false
+  },
+  "migration": {
+    "target": "bossai-commerce customer-service channel adapters",
+    "mode": "merge-unique-domestic-channel-capability",
+    "copyBusinessState": false,
+    "copyLocalAgentRuntime": false,
+    "copyLocalApprovalAuthority": false
+  }
+}

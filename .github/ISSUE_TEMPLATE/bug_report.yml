@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible defect using synthetic data.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not paste real merchant secrets, tokens, cookies, customer PII or sensitive production payloads."
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: v1.1.0 or commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Offline demo, Douyin adapter, Taobao/Tmall/Qianniu adapter, Connector envelope, Safety policy, Canonical intake bridge, Diagnostic UI, CI/docs, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Prefer synthetic/demo data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

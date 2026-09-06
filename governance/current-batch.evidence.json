@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "project": "douyin-taobao-cs",
+  "batch": "public-source-channel-hardening-v1.1.0-2026-09-06",
+  "generatedAt": "2026-09-06T06:54:47.000Z",
+  "evidenceClass": "local-public-source-candidate-not-live-platform-attestation",
+  "completionLevel": 2,
+  "publicSourcePublishReady": true,
+  "releaseAttested": false,
+  "productionReady": false,
+  "livePlatformValidated": false,
+  "checks": [
+    { "command": "npm test", "result": "passed", "detail": "20/20 channel-adapter tests passed on origin/main@62f5d16 merge worktree" },
+    { "command": "npm run test:e2e", "result": "passed", "detail": "17/17 local real-entry E2E scenarios passed after replacing the legacy auto-customer-service frontend" },
+    { "command": "npm run demo", "result": "passed", "detail": "Synthetic Douyin and Taobao/Qianniu signatures verified without real merchant credentials or external network calls" },
+    { "command": "npm run verify:channel-adapter", "result": "passed", "detail": "BossAI OS / canonical Customer Service authority and fail-closed external-action boundaries passed" },
+    { "command": "npm run verify:public-release", "result": "passed", "detail": "Community Source license identity, v1.0.0 history preservation, CI/release truth gates and secret hygiene passed" },
+    { "command": "npm run verify:release-candidate", "result": "passed", "detail": "19 critical public/runtime files match the reviewed v1.1.0 SHA-256 manifest" },
+    { "command": "powershell -File scripts/publish-v1.1.0.ps1 -Confirmation PUBLISH_BOSSAI_DOUYIN_TAOBAO_V1_1_0 -PreflightOnly", "result": "passed", "detail": "Fetched and matched reviewed origin/main 27fac7b63f8d217ea744d5511f4b7866dc925dbf, preserved v1.0.0, confirmed no v1.1.0/release-branch collision, reran npm ci/demo/check/RC verification, and exited before any branch/commit/tag/PR/push" },
+    { "command": "npm ci", "result": "passed", "detail": "0 vulnerabilities reported with the hardened zero-runtime-dependency package" },
+    { "command": "git diff --check + JSON parse", "result": "passed", "detail": "No whitespace errors; relevant JSON files parsed successfully" }
+  ],
+  "validatedBehaviors": [
+    "Synthetic and contract-level Douyin/Taobao signatures verify without real merchant credentials",
+    "Signed messages normalize to bossai.customer-service-connector-envelope.v1",
+    "Stable account-scoped idempotency is preserved",
+    "Receiver PII is excluded from Taobao order-fact reads",
+    "Direct customer sends and polling auto-replies are fail-closed",
+    "Refund/complaint/order/account/legal/privacy cases require human review",
+    "BossAI OS is the bounded AI gateway and direct provider-key paths are removed",
+    "Canonical BossAI Customer Service intake is required before callback success acknowledgement",
+    "Canonical intake failure produces retryable 5xx rather than silent loss",
+    "Diagnostic UI does not present automatic external actions as available",
+    "Safe publisher requires an explicit confirmation token, locks the reviewed remote main SHA, refuses force push/tag overwrite, and stops before Git write when remote state is unreviewed",
+    "Reviewed documentation-only rebase conflicts are bounded to an explicit allowlist and are followed by SHA-256 release-candidate verification before any remote push"
+  ],
+  "notValidated": [
+    "Real Douyin merchant application credentials and production callback",
+    "Real Taobao/Tmall/Qianniu merchant credentials and production callback",
+    "Real canonical accountRef-to-brand bindings",
+    "Real BossAI OS customer key/model execution",
+    "Human approval followed by governed real customer-message send",
+    "Platform permissions, allowlists and merchant authorization"
+  ],
+  "releaseHistoryBoundary": "Existing remote v1.0.0 Community Demo source release and BossAI Community Source License 1.0 are preserved. This batch targets v1.1.0 and must not move or overwrite v1.0.0.",
+  "remoteBase": "62f5d1668f0392a2a6f138a015b4f0810c6a4619",
+  "latestRemoteObserved": "27fac7b63f8d217ea744d5511f4b7866dc925dbf",
+  "remoteDeltaReview": "Remote moved after the isolated worktree was created. The deltas from 62f5d16 through 27fac7b changed discovery/README content, structured Community Demo feedback/Issue config, and evidence-aware contribution/PR templates only. Their English discovery, BossAI website, v1.0.0 release, feedback funnel, and platform-evidence contribution requirements were incorporated into the v1.1.0 candidate without changing the tested runtime.",
+  "workingTreeNote": "Merged in an isolated DevSpace worktree based on latest fetched origin/main; PROJECT_FROZEN_DO_NOT_USE.md is intentionally not modified by this v1.1.0 hardening batch."
+}

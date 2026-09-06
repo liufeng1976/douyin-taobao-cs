@@ -1,219 +1,198 @@
 /**
- * AI 推理引擎
+ * Bounded customer-support drafting through the BossAI OS AI Gateway.
  *
- * 使用 DeepSeek 大模型进行:
- *  1. 意图识别 (售前咨询/售后/物流/投诉/退货)
- *  2. 智能回复生成
- *  3. 多轮对话上下文管理
- *  4. 知识库检索增强 (RAG)
+ * This module is intentionally not an Agent Runtime and does not own durable
+ * conversation memory, approvals, billing, provider routing or external action
+ * authority. Every result is a reviewable draft only.
  */
 
-const axios = require('axios');
-const crypto = require('crypto');
 const { logInfo, logError } = require('../utils/logger');
+const { evaluateMessage } = require('../policy/responsePolicy');
 
-const AI_API = 'https://api.deepseek.com/chat/completions';
+const DEFAULT_BOSSAI_OS_URL = 'http://127.0.0.1:3001';
+const DEFAULT_MODEL = 'bossai-balanced';
 
-// --- 对话记忆 (内存缓存, 生产环境可替换为 Redis) ---
-const conversationCache = new Map(); // key: shopId_customerId, value: [{role, content}]
-const CACHE_TTL = 30 * 60 * 1000; // 30分钟过期
-
-// --- 系统 Prompt ---
-const SYSTEM_PROMPT = `你是一个专业的电商客服助手，同时服务于抖音电商和淘宝店铺。
-
-## 你的职责
-1. 解答客户产品咨询 (规格、价格、库存、使用方法等)
-2. 处理物流查询 (快递单号、物流进度)
-3. 处理售后问题 (退换货、退款、质量问题)
-4. 引导下单 (优惠活动、搭配推荐)
-
-## 回复规则
-- 使用简洁、热情、有温度的中文
-- 优先使用知识库信息回答
-- 涉及订单查询时，先核对订单号
-- 涉及投诉/差评时，先安抚情绪再解决问题
-- 无法回答的问题，告知会转接人工客服
-- 回复控制在 200 字以内，除非需要详细说明
-- 使用适当的 emoji 增加亲和力
-
-## 敏感处理
-- 不要承诺退款金额 (需核实)
-- 不要泄露其他客户信息
-- 遇到恶意投诉保持冷静，统一回复"已为您记录，会有专人处理"`;
-
-function demoReply(message, kbContext) {
-  const firstKbAnswer = Array.isArray(kbContext) && kbContext[0]?.answer
-    ? String(kbContext[0].answer).trim()
-    : '';
-
-  if (firstKbAnswer) {
-    return `[本地演示模式] ${firstKbAnswer}`;
+function normalizeBossAiUrl(value) {
+  const url = new URL(String(value || DEFAULT_BOSSAI_OS_URL));
+  const loopback = ['127.0.0.1', 'localhost', '::1'].includes(url.hostname);
+  if (url.protocol !== 'https:' && !(loopback && url.protocol === 'http:')) {
+    throw new Error('BossAI OS URL must use HTTPS except for loopback HTTP.');
   }
-
-  if (/发货|物流|快递|到货/.test(message)) {
-    return '您好，当前为本地演示模式。真实物流状态需要在取得平台授权后接入订单/物流 API 查询；当前不会伪造物流结果。';
-  }
-
-  if (/退货|退款|售后/.test(message)) {
-    return '您好，当前为本地演示模式。退换货规则可通过本地知识库演示，真实订单退款与售后操作需要平台 API 授权并经过人工审核。';
-  }
-
-  return '您好，当前为本地演示模式：可体验客服流程与知识库 RAG；配置 DEEPSEEK_API_KEY 后才会调用 DeepSeek，抖音/淘宝真实消息收发还需要各平台正式 API 凭据与验收。';
+  return url.origin;
 }
 
-/**
- * 生成 AI 回复
- */
-async function generateReply({ message, platform, customerId, shopId, kbContext, orderContext, conversationId }) {
-  if (!process.env.DEEPSEEK_API_KEY) {
-    logInfo({ module: 'ai', event: 'demo_fallback', platform, customerId });
-    return demoReply(message, kbContext);
+function selectedModel() {
+  const model = String(process.env.BOSSAI_AI_MODEL || DEFAULT_MODEL).trim();
+  if (!model.startsWith('bossai-')) {
+    throw new Error('Only public bossai-* model aliases are allowed.');
+  }
+  return model;
+}
+
+function cleanKnowledge(kbContext) {
+  if (!Array.isArray(kbContext)) return [];
+  return kbContext.slice(0, 5).map((doc) => ({
+    question: String(doc?.question || '').trim().slice(0, 500),
+    answer: String(doc?.answer || '').trim().slice(0, 4000),
+    category: String(doc?.category || 'general').trim().slice(0, 80),
+  })).filter((doc) => doc.question && doc.answer);
+}
+
+function buildMessages({ message, platform, kbContext, orderContext, policy }) {
+  const knowledge = cleanKnowledge(kbContext);
+  const verifiedSections = [];
+
+  if (knowledge.length) {
+    verifiedSections.push('店铺已配置知识：\n' + knowledge.map((doc, index) => `${index + 1}. Q: ${doc.question}\n   A: ${doc.answer}`).join('\n'));
+  }
+  if (orderContext && typeof orderContext === 'object') {
+    verifiedSections.push(`平台返回的最小订单事实：${JSON.stringify(orderContext)}`);
+  }
+
+  const system = [
+    '你是 BossAI 客服体系中的“受限草稿生成能力”，不是可自主执行的客服员工。',
+    `当前渠道：${platform === 'douyin' ? '抖音电商' : '淘宝/天猫/千牛'}.`,
+    '只能依据本次消息、店铺明确配置的知识和平台已核实事实生成回复草稿。',
+    '不得编造价格、库存、优惠、发货时效、退换货政策、物流状态、退款结果、补发结果、赔偿结果或任何未核实事实。',
+    '不得声称已经退款、取消、改地址、补发、赔偿、修改订单或修改账户。',
+    '涉及退款、退货、投诉、差评、取消、赔偿、账户、支付、法律、安全或隐私问题时，只能说明会核实并转人工处理。',
+    '所有输出都需要人工审核后才能对客户发送。',
+    '使用简洁、礼貌、自然的中文；返回纯回复正文，不要解释内部流程。',
+    `风险策略：${policy.policy}; 风险级别：${policy.risk}.`,
+  ].join('\n');
+
+  const user = [
+    `客户消息：${String(message || '').trim()}`,
+    '',
+    verifiedSections.length ? verifiedSections.join('\n\n') : '当前没有可用的店铺知识或订单核实事实。',
+  ].join('\n');
+
+  return [{ role: 'system', content: system }, { role: 'user', content: user }];
+}
+
+function safeFallbackDraft({ message, kbContext, policy }) {
+  const knowledge = cleanKnowledge(kbContext);
+  const best = knowledge[0];
+
+  if (policy.risk === 'high') {
+    return '您好，已收到您的问题。这个事项需要进一步核实并由人工客服确认后处理，我先为您记录，请不要重复提交。核实完成后会给您明确答复。';
+  }
+
+  if (best) {
+    return String(best.answer).trim();
+  }
+
+  const question = String(message || '').trim();
+  return question
+    ? '您好，已收到您的咨询。目前缺少足够的店铺或订单核实信息，我不会直接猜测。请提供相关订单号或具体商品信息，我们核实后再给您准确答复。'
+    : '您好，请告诉我您想咨询的商品或订单问题，我们会核实后给您准确答复。';
+}
+
+async function generateDraft({ message, platform, customerId, shopId, kbContext, orderContext }) {
+  const policy = evaluateMessage(message);
+  const apiKey = String(process.env.BOSSAI_OS_API_KEY || '').trim();
+
+  if (!apiKey) {
+    return {
+      draftText: safeFallbackDraft({ message, kbContext, policy }),
+      source: 'local_safety_template',
+      reason: 'BOSSAI_OS_API_KEY_NOT_CONFIGURED',
+      policy,
+      reviewRequired: true,
+      externalActionsExecuted: false,
+    };
   }
 
   try {
-    const cacheKey = `${shopId}_${customerId}`;
-
-    // 获取或创建对话上下文
-    if (!conversationCache.has(cacheKey)) {
-      conversationCache.set(cacheKey, []);
-    }
-    const history = conversationCache.get(cacheKey);
-
-    // 构建消息列表
-    const messages = [
-      { role: 'system', content: buildSystemPrompt(platform, kbContext) },
-    ];
-
-    // 添加订单上下文
-    if (orderContext) {
-      messages.push({
-        role: 'system',
-        content: `当前客户关联订单: ${JSON.stringify(orderContext)}`,
-      });
-    }
-
-    // 添加历史对话 (保留最近10轮)
-    const recentHistory = history.slice(-20);
-    messages.push(...recentHistory);
-
-    // 添加当前消息
-    messages.push({ role: 'user', content: message });
-
-    // 调用 DeepSeek
-    const response = await axios.post(
-      AI_API,
-      {
-        model: process.env.AI_MODEL || 'deepseek-chat',
-        messages,
-        temperature: 0.7,
-        max_tokens: 600,
-        top_p: 0.9,
+    const baseUrl = normalizeBossAiUrl(process.env.BOSSAI_OS_URL);
+    const model = selectedModel();
+    const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-bossai-api-key': apiKey,
       },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-        },
-        timeout: 15000,
-      }
-    );
-
-    const reply = response.data?.choices?.[0]?.message?.content?.trim();
-
-    if (reply) {
-      // 保存对话历史
-      history.push({ role: 'user', content: message });
-      history.push({ role: 'assistant', content: reply });
-      conversationCache.set(cacheKey, history);
-
-      // 设置过期清理
-      setTimeout(() => {
-        if (conversationCache.has(cacheKey)) {
-          conversationCache.delete(cacheKey);
-        }
-      }, CACHE_TTL);
-
-      logInfo({ module: 'ai', event: 'reply_generated', platform, customerId, length: reply.length });
-    }
-
-    return reply;
-  } catch (err) {
-    logError({ module: 'ai', event: 'generate_error', error: err.message, platform });
-    // 降级回复
-    return '您好，我正在处理您的问题，请稍等。如需紧急帮助，请联系人工客服。';
-  }
-}
-
-/**
- * 意图识别
- */
-async function detectIntent(message) {
-  if (!process.env.DEEPSEEK_API_KEY) {
-    return { intent: 'other', urgency: 'normal', sentiment: 'neutral', mode: 'demo' };
-  }
-
-  try {
-    const response = await axios.post(
-      AI_API,
-      {
-        model: process.env.AI_MODEL || 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: `分析客户消息的意图，返回 JSON: {"intent": "类别", "urgency": "normal|urgent", "sentiment": "positive|neutral|negative"}
-
-意图类别: product_inquiry(产品咨询), order_status(订单查询), shipping(物流查询), refund(退款/退货), complaint(投诉), promotion(活动咨询), greeting(问候), other(其他)`,
-          },
-          { role: 'user', content: message },
-        ],
-        temperature: 0.3,
-        max_tokens: 100,
-        response_format: { type: 'json_object' },
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-        },
-        timeout: 8000,
-      }
-    );
-
-    const content = response.data?.choices?.[0]?.message?.content;
-    return JSON.parse(content);
-  } catch {
-    return { intent: 'other', urgency: 'normal', sentiment: 'neutral' };
-  }
-}
-
-/**
- * 构建系统 Prompt (包含知识库信息)
- */
-function buildSystemPrompt(platform, kbContext) {
-  let prompt = SYSTEM_PROMPT;
-
-  prompt += `\n\n## 当前平台: ${platform === 'douyin' ? '抖音电商' : '淘宝/千牛'}`;
-
-  if (kbContext && kbContext.length > 0) {
-    prompt += '\n\n## 知识库参考\n';
-    kbContext.forEach((doc, i) => {
-      prompt += `${i + 1}. Q: ${doc.question}\n   A: ${doc.answer}\n`;
+      body: JSON.stringify({
+        model,
+        messages: buildMessages({ message, platform, kbContext, orderContext, policy }),
+        stream: false,
+      }),
+      signal: AbortSignal.timeout(Number(process.env.BOSSAI_AI_TIMEOUT_MS || 15000)),
     });
-  }
+    if (!response.ok) throw new Error(`BossAI OS Gateway request failed: ${response.status}`);
+    const payload = await response.json();
+    const draftText = String(payload?.choices?.[0]?.message?.content || '').trim();
+    if (!draftText) throw new Error('BossAI OS Gateway returned an empty draft.');
 
-  return prompt;
+    logInfo({
+      module: 'ai',
+      event: 'draft_generated',
+      platform,
+      shopId,
+      customerId,
+      model,
+      risk: policy.risk,
+      length: draftText.length,
+      externalActionsExecuted: false,
+    });
+
+    return {
+      draftText,
+      source: 'bossai_os_gateway',
+      reason: null,
+      policy,
+      reviewRequired: true,
+      externalActionsExecuted: false,
+    };
+  } catch (error) {
+    logError({ module: 'ai', event: 'draft_error', platform, error: error.message });
+    return {
+      draftText: safeFallbackDraft({ message, kbContext, policy }),
+      source: 'local_safety_template',
+      reason: error.message,
+      policy,
+      reviewRequired: true,
+      externalActionsExecuted: false,
+    };
+  }
 }
 
-/**
- * 清除会话缓存
- */
-function clearConversation(shopId, customerId) {
-  const key = `${shopId}_${customerId}`;
-  conversationCache.delete(key);
+async function generateReply(input) {
+  const result = await generateDraft(input);
+  return result.draftText;
+}
+
+async function detectIntent(message) {
+  const policy = evaluateMessage(message);
+  const reason = policy.reasons[0] || 'unclassified_support_message';
+  const map = {
+    refund_or_return: 'refund',
+    cancel_or_modify_order: 'order_change',
+    compensation_or_dispute: 'complaint',
+    payment_or_account: 'account_or_payment',
+    legal_or_safety: 'legal_or_safety',
+    privacy_or_pii: 'privacy',
+    shipping_info: 'shipping',
+    product_info: 'product_inquiry',
+    greeting: 'greeting',
+  };
+  return {
+    intent: map[reason] || 'other',
+    urgency: policy.risk === 'high' ? 'urgent' : 'normal',
+    sentiment: 'neutral',
+    policy,
+  };
+}
+
+function clearConversation() {
+  return { cleared: false, reason: 'NO_LOCAL_CONVERSATION_MEMORY_AUTHORITY' };
 }
 
 module.exports = {
+  generateDraft,
   generateReply,
   detectIntent,
   clearConversation,
+  normalizeBossAiUrl,
+  safeFallbackDraft,
 };
