@@ -1,0 +1,33 @@
+BossAI Community Source License 1.0
+
+Copyright (c) 2026 刘风 / BossAI. All rights reserved except as expressly granted below.
+
+1. Scope
+This license applies to BossAI-owned source code in repository revisions that expressly include this license. Third-party components remain governed by their own licenses. Nothing in this license revokes rights previously granted under any earlier explicit license.
+
+2. Personal and non-commercial grant
+Subject to this license, 刘风 / BossAI grants you a worldwide, royalty-free, non-exclusive right to use, copy, modify, run, study and redistribute the covered source code and your modifications solely for personal, educational, evaluation, research and other non-commercial purposes.
+
+3. Commercial use requires authorization
+Any commercial use requires a separate written BossAI commercial license or an applicable active BossAI commercial entitlement. Commercial use includes use by or for a company or organization in production, paid services, client delivery, ecommerce operations for commercial advantage, customer-service outsourcing, resale, hosted services, white-label/OEM use, or other use primarily intended to obtain commercial advantage or monetary compensation.
+
+4. Redistribution
+Non-commercial redistribution of covered source or binaries is permitted if you preserve this license, BossAI copyright notices and applicable third-party notices, and you do not represent your build as an official BossAI release unless BossAI has authorized that representation.
+
+5. Trademarks and representation
+This license does not grant permission to use BossAI names, logos or trademarks to imply sponsorship, endorsement or official status. Forks and modified versions must not be represented as official BossAI products unless separately authorized.
+
+6. Third-party services, credentials and platform terms
+This license does not grant rights to DeepSeek, Douyin, Taobao, QianNiu or other third-party services, APIs, trademarks, SDKs, credentials or data. Users are responsible for obtaining required platform permissions and complying with applicable third-party terms. Credentials, tokens, cookies and customer data must not be redistributed.
+
+7. Contributions
+Unless a separate written contribution agreement applies, contributions submitted for inclusion in this repository are licensed to BossAI and downstream recipients under this same license for covered revisions. Contributors must have the right to submit their contributions.
+
+8. No warranty
+THE COVERED SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDERS AND CONTRIBUTORS ARE NOT LIABLE FOR CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM USE OF THE SOFTWARE.
+
+9. Termination
+Rights under this license terminate automatically if you materially violate its terms and do not cure the violation within 30 days after receiving notice when cure is reasonably possible.
+
+10. Commercial licensing
+Commercial licensing information is provided through BossAI and https://bossaios.com. This license does not itself grant commercial-use rights.
