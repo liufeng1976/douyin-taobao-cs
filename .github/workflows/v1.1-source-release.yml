@@ -17,19 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Verify API-free demo and public-source boundaries
-        run: |
-          npm run demo
-          npm run check
-          npm run verify:release-candidate
       - name: Resolve governed release request
         id: request
         shell: bash
@@ -45,7 +40,8 @@ jobs:
           if (req.sourceOnly !== true || req.productionPlatformApiValidated !== false || req.signedBinaryIncluded !== false) throw new Error('Release truth boundary violated.');
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `tag=${req.tag}\n`);
           NODE
-      - name: Create immutable source tag
+      - name: Inspect immutable release state
+        id: immutable_state
         env:
           TAG: ${{ steps.request.outputs.tag }}
         shell: bash
@@ -53,12 +49,41 @@ jobs:
           set -euo pipefail
           git fetch --tags origin
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "Tag $TAG already exists; refusing to move or overwrite it."
-            exit 1
+            existing_sha="$(git rev-list -n 1 "$TAG")"
+            echo "Tag $TAG already exists at $existing_sha; preserving it without movement."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "sha=$existing_sha" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $TAG does not exist yet; release-candidate attestation is required."
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Verify current API-free source boundaries
+        run: |
+          npm run demo
+          npm run check
+      - name: Verify unreleased v1.1 release candidate
+        if: steps.immutable_state.outputs.exists == 'false'
+        run: npm run verify:release-candidate
+      - name: Verify existing immutable GitHub Release
+        if: steps.immutable_state.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.request.outputs.tag }}
+        shell: bash
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          echo "Existing $TAG release verified; no tag or release mutation will occur."
+      - name: Create immutable source tag
+        if: steps.immutable_state.outputs.exists == 'false'
+        env:
+          TAG: ${{ steps.request.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
           git tag "$TAG" "$GITHUB_SHA"
           git push origin "$TAG"
       - name: Create GitHub Release
+        if: steps.immutable_state.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.request.outputs.tag }}

@@ -4,7 +4,7 @@ An **API-free, source-available reference implementation** for Douyin Shop, Taob
 
 > You do not need a real Douyin or Taobao merchant API account to clone, run, test or understand this repository.
 
-[中文 README](README.md) · [BossAI website](https://bossaios.com) · [v1.0.0 Community Demo Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0)
+[中文 README](README.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [3-minute demo feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI website](https://bossaios.com)
 
 ## Quick start
 
@@ -25,7 +25,7 @@ Full local verification:
 npm run check
 ```
 
-Current v1.1.0 candidate baseline:
+The published `v1.1.0` release is validated locally and in GitHub Actions:
 
 ```text
 20/20 channel-adapter tests passed
@@ -64,6 +64,8 @@ AI drafting, when configured, goes only through BossAI OS using public `bossai-*
 
 Missing Douyin/Taobao credentials do **not** block GitHub publication, offline demo, CI, forks, issues or local development. They only block claims of live marketplace integration or production deployment.
 
+After `npm run demo`, use the [Community Demo Feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) form to report compatibility findings, ask about a governed real-platform integration, or discuss a BossAI commercial deployment. Do not post real App Secrets, tokens, cookies or customer PII.
+
 `.env.example` therefore keeps real marketplace channels disabled by default.
 
 ## BossAI ecosystem
@@ -94,7 +96,7 @@ npm run probe:canonical-integration
 
 ## Version history
 
-`v1.0.0` is the existing Community Demo Source Release and remains immutable. `v1.1.0` is the current hardening candidate built on the latest fetched remote `main` baseline.
+`v1.0.0` remains immutable release history. `v1.1.0` is the current published API-free connector hardening release.
 
 ## License
 

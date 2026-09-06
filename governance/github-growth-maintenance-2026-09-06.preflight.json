@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 3,
+  "project": "douyin-taobao-cs",
+  "batch": "github-growth-maintenance-2026-09-06",
+  "highestCommercialGoal": "Convert the newly published v1.1.0 GitHub traffic into qualified BossAI interest without weakening the connector's safety or licensing truth boundaries.",
+  "largestUserGap": "The repository About metadata still advertises the legacy DeepSeek auto-reply/RAG product shape, while the README and v1.1.0 release now position the project as an API-free governed connector reference.",
+  "userProblem": "A GitHub visitor can discover stale repository metadata before reading the corrected README, creating confusion about what is actually runnable, safe and commercially supported.",
+  "userVisibleChange": "The README leads with the published v1.1.0 release, a three-minute demo feedback path and BossAI commercial entry; CI uses current Node 24-compatible GitHub actions; the historical v1.1.0 tag remains immutable during post-release workflow maintenance.",
+  "scope": [
+    "upgrade GitHub JavaScript actions from v4 to v7",
+    "make the v1.1 post-release workflow idempotent when the immutable tag already exists",
+    "update Chinese and English README release/feedback CTAs",
+    "document the repository About/homepage/topics metadata correction",
+    "preserve existing v1.0.0 and v1.1.0 tags/releases"
+  ],
+  "outOfScope": [
+    "changing v1.1.0 tag or release contents",
+    "claiming traffic, revenue or conversion growth before measurement",
+    "enabling automatic customer messaging or commerce mutations",
+    "claiming real Douyin/Taobao production API validation",
+    "changing BossAI Community Source License 1.0"
+  ],
+  "capabilityClassification": "tool-channel-adapter-public-discovery-maintenance",
+  "realEntryAcceptance": [
+    "npm run check passes",
+    "git diff --check passes",
+    "README links point to the published v1.1.0 release and Community Demo Feedback issue form",
+    "CI and release workflows use actions/checkout@v7 and actions/setup-node@v7",
+    "release workflow preserves an existing v1.1.0 tag without movement and verifies the existing GitHub Release"
+  ],
+  "machineChecks": [
+    "npm run check",
+    "git diff --check"
+  ],
+  "targetCompletionLevel": 2,
+  "completionClaim": "L2 post-release discovery and CI maintenance candidate; GitHub metadata writes and remote CI are not claimed until separately applied and observed."
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 3,
+  "project": "douyin-taobao-cs",
+  "batch": "github-growth-maintenance-2026-09-06",
+  "generatedAt": "2026-09-06T08:04:30Z",
+  "completionLevel": 2,
+  "remoteBase": "c57b4b87dbc2203e30f1cf50ec7f993951627d0f",
+  "publishedRelease": {
+    "tag": "v1.1.0",
+    "tagCommit": "c57b4b87dbc2203e30f1cf50ec7f993951627d0f",
+    "name": "douyin-taobao-cs v1.1.0 — API-free Connector Reference",
+    "publishedAt": "2026-09-06T07:53:41Z",
+    "url": "https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0",
+    "immutableHistoryChanged": false
+  },
+  "publicMetadataObservedBeforeApply": {
+    "description": "🤖 AI 自动客服系统 — 同时对接抖音电商 & 淘宝/千牛。多平台统一管理 DeepSeek AI 智能回复 知识库 RAG",
+    "homepageUrl": "",
+    "repositoryTopics": null,
+    "stargazerCount": 20,
+    "forkCount": 5,
+    "metadataWriteApplied": false
+  },
+  "checks": [
+    {
+      "command": "npm run check",
+      "result": "passed",
+      "detail": "20/20 channel-adapter tests, channel-adapter verifier, public-release verifier and 17/17 local HTTP E2E passed."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "detail": "No whitespace errors; Windows line-ending warnings are informational only."
+    },
+    {
+      "command": "PowerShell parse scripts/apply-github-growth-metadata.ps1",
+      "result": "passed",
+      "detail": "Guarded GitHub metadata script parsed successfully without executing writes."
+    },
+    {
+      "command": "gh release view v1.1.0",
+      "result": "passed",
+      "detail": "Existing v1.1.0 GitHub Release is present and still points to immutable release history."
+    }
+  ],
+  "candidateChanges": [
+    "upgrade actions/checkout and actions/setup-node to v7 in CI and release workflows",
+    "make v1.1 release workflow idempotent after the immutable tag already exists",
+    "update Chinese and English README to the published v1.1.0 release and Community Demo Feedback CTA",
+    "document and script the GitHub About/homepage/topics correction",
+    "preserve all customer-message, refund and order/account mutation fail-closed boundaries"
+  ],
+  "notYetApplied": [
+    "GitHub About description update",
+    "GitHub homepage update",
+    "GitHub repository topics update",
+    "remote commit/PR/CI for this post-release maintenance batch"
+  ],
+  "completionClaim": "Local L2 post-release discovery/CI maintenance candidate. Source changes are validated locally; external GitHub metadata and remote merge are not claimed until explicitly applied and observed."
+}
