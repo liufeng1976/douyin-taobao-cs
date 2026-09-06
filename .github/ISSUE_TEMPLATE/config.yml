@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: v1.0.0 Community Demo Release
+    url: https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0
+    about: Read the validated local-demo scope and the production-platform limitations before reporting a problem.
+  - name: BossAI Ecommerce Manager Skill
+    url: https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill
+    about: Continue from customer service into ecommerce operations, product research, content, sales, projects and approval-aware workflows.
+  - name: BossAI product and commercial information
+    url: https://bossaios.com
+    about: Product information and commercial authorization. Do not post private account, platform, order or customer data in public GitHub Issues.

@@ -1,0 +1,129 @@
+name: Community Demo feedback / Community Demo 反馈
+description: Share your local demo result and integration needs without posting platform credentials or customer data. / 反馈本地 Demo 结果和集成需求，请勿提交平台凭据或客户数据。
+title: "[Demo] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for evaluating the **douyin-taobao-cs v1.0.0 Community Demo**.
+
+        This repository is a public technical demo. **Real Douyin / Taobao / QianNiu production API validation has not been completed.**
+
+        Never post App Keys, App Secrets, access tokens, session keys, shop credentials, cookies, customer conversations, order data, phone numbers, addresses, private logs, or other sensitive/private information.
+
+        感谢试用 **douyin-taobao-cs v1.0.0 Community Demo**。
+
+        本仓库是公开技术演示项目，**尚未完成真实抖音 / 淘宝 / 千牛生产 API 验收**。
+
+        请勿提交 App Key、App Secret、Access Token、Session Key、店铺凭据、Cookie、客户对话、订单数据、手机号、地址、私有日志或其他敏感/隐私信息。
+
+  - type: dropdown
+    id: local_demo
+    attributes:
+      label: Local demo result / 本地 Demo 结果
+      options:
+        - Started successfully and UI opened / 启动成功并打开界面
+        - Server started but UI/workflow had a problem / 服务启动但界面或流程有问题
+        - Installation or startup failed / 安装或启动失败
+        - Not tested yet / 尚未测试
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ai_mode
+    attributes:
+      label: AI mode tested / 测试的 AI 模式
+      options:
+        - No-key local Demo fallback / 无 Key 本地 Demo fallback
+        - DeepSeek with my own authorized key / 使用我自己的合法 DeepSeek Key
+        - Both / 两者都测试了
+        - Not sure / 不确定
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: interests
+    attributes:
+      label: Which areas matter to you? / 你最关注哪些方向？
+      options:
+        - label: Douyin ecommerce customer service / 抖音电商客服
+        - label: Taobao / QianNiu customer service / 淘宝 / 千牛客服
+        - label: Knowledge base / RAG / 知识库 RAG
+        - label: Human review and takeover / 人工审核与接管
+        - label: Multi-shop management / 多店铺管理
+        - label: Ecommerce operations beyond customer service / 客服之外的电商运营
+        - label: Market/opportunity research / 市场与商机研究
+        - label: Video/content production / 视频与内容生产
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform_access
+    attributes:
+      label: Do you already have legitimate current platform API access? / 你是否已经取得当前合法的平台 API 权限？
+      description: Do not paste credentials. This asks only whether access exists. / 这里只询问是否具备权限，请勿粘贴凭据。
+      options:
+        - Douyin access / 已有抖音权限
+        - Taobao / QianNiu access / 已有淘宝 / 千牛权限
+        - Both / 两者都有
+        - No / 暂无
+        - Applying / 申请中
+        - Not sure / 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked? / 哪些功能正常？
+      description: Describe the furthest successful step using non-sensitive information only. / 只用非敏感信息说明最远成功到哪一步。
+    validations:
+      required: true
+
+  - type: textarea
+    id: blocker
+    attributes:
+      label: What blocked you? / 什么阻塞了你？
+      description: Include reproducible steps and public-safe error text. Remove credentials and customer data. / 可填写复现步骤和可公开错误信息，请删除凭据和客户数据。
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: next_step
+    attributes:
+      label: Most useful next step / 对你最有价值的下一步
+      options:
+        - Improve the local customer-service demo / 完善本地客服 Demo
+        - Validate a real Douyin integration after authorized credentials are available / 有合法权限后验证真实抖音接入
+        - Validate a real Taobao/QianNiu integration after authorized credentials are available / 有合法权限后验证真实淘宝/千牛接入
+        - Continue into BossAI Ecommerce Manager / 转到 BossAI Ecommerce Manager
+        - Continue into BossAI Radar Lite / 转到 BossAI Radar Lite
+        - Continue into BossAI Video Agent / 转到 BossAI Video Agent
+        - Other / 其他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: intended_use
+    attributes:
+      label: Intended use / 预期用途
+      options:
+        - Personal learning/evaluation / 个人学习或评估
+        - Internal business evaluation / 企业内部评估
+        - Ecommerce operations / 电商运营
+        - Customer-service outsourcing or client delivery / 客服外包或客户交付
+        - SaaS / hosted service evaluation / SaaS 或托管服务评估
+        - Not sure yet / 暂不确定
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety acknowledgement / 安全确认
+      options:
+        - label: I removed App Keys, App Secrets, tokens, session keys, shop credentials, cookies, customer conversations, order/customer data, private logs and other sensitive/private information. / 我已移除 App Key、App Secret、Token、Session Key、店铺凭据、Cookie、客户对话、订单/客户数据、私有日志及其他敏感/隐私信息。
+          required: true
+        - label: I understand this repository does not claim validated Douyin/Taobao/QianNiu production API access. / 我知道本仓库不声称已完成抖音/淘宝/千牛生产 API 验收。
+          required: true
