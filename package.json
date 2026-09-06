@@ -39,6 +39,7 @@
     "verify:community-demo": "npm run verify:public-release",
     "check:production-readiness": "node scripts/check-production-readiness.js",
     "probe:canonical-integration": "node scripts/probe-canonical-integration.js",
+    "growth:traffic": "node scripts/github-traffic-report.js",
     "check": "npm test && npm run verify:channel-adapter && npm run verify:public-release && npm run test:e2e"
   },
   "engines": {

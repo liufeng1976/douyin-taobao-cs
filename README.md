@@ -10,7 +10,7 @@
 
 > 这是 BossAI 的公开 source-available 技术与获客项目，不声称已经获得抖音/淘宝生产 API 权限，也不把自动回复、退款或订单修改伪装成已上线能力。
 
-[English README](README_EN.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [3 分钟体验后反馈](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI 官网](https://bossaios.com)
+[English README](README_EN.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [60 秒反馈 / 集成问题](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI 官网](https://bossaios.com)
 
 ## 3 分钟跑起来
 
@@ -43,6 +43,8 @@ signatureVerified=true
 === Demo result ===
 PASS
 ```
+
+跑通了、卡住了，或者只是想问后续怎么接真实平台，都可以用 [60 秒 Community Demo Feedback](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml)。**不需要提供平台凭据，也不要粘贴客户数据。**
 
 完整本地验收：
 

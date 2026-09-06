@@ -17,11 +17,11 @@ Do not keyword-stuff or claim unavailable production access.
 
 ## About description
 
-Current public metadata still contains the legacy "DeepSeek AI auto-reply / RAG" positioning and should be replaced with:
+Current public metadata is aligned to the v1.1.0 API-free connector positioning:
 
-`API-free Douyin/Taobao/Tmall/Qianniu customer-service connector reference: signed webhooks, normalization, idempotency, human review, BossAI intake.`
+`API-free Douyin/Taobao/Tmall/Qianniu customer-service connector: signed webhooks, normalization, idempotency, human review, BossAI intake.`
 
-Recommended homepage: `https://bossaios.com`.
+Current homepage: `https://bossaios.com`.
 
 ## Recommended topics
 
@@ -47,4 +47,46 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/apply-github-growth-
 
 The script changes only the GitHub About description, homepage and discovery topics. It does not change repository visibility, source code, branches, tags or releases.
 
+## Read-only traffic reporting
+
+With an authenticated GitHub CLI account that has repository traffic access, run:
+
+```bash
+npm run growth:traffic
+```
+
+For machine-readable output:
+
+```bash
+node scripts/github-traffic-report.js --json
+```
+
+The report compares the current rolling 14-day GitHub traffic window against `governance/github-traffic-baseline-2026-09-06.json`. Views/clones are rolling-window deltas, not cumulative growth. Stars/forks/issues are point-in-time cumulative count deltas.
+
 Measure actual GitHub traffic and downstream conversions before claiming growth impact.
+
+## 2026-09-06 traffic baseline
+
+GitHub's repository traffic API reported the following rolling 14-day baseline before enough time had elapsed to attribute any lift to the v1.1.0 post-release optimization batch:
+
+- 203 views / 106 unique visitors;
+- 30 clones / 26 unique cloners;
+- 20 stars / 5 forks;
+- 0 public issues;
+- top referrers: GitHub 171 views, Bing 6, ChatGPT 1;
+- visitors opened the Taobao and Douyin adapter implementation files, not only the repository overview.
+
+The durable evidence record is `governance/github-traffic-baseline-2026-09-06.json`.
+
+### Seven-day observation rule
+
+For the next seven days, compare rolling GitHub traffic rather than claiming immediate causality. Watch:
+
+1. unique visitors and unique cloners;
+2. non-GitHub referrers and search discovery;
+3. stars and forks;
+4. Community Demo Feedback / issue creation;
+5. popular-path movement into README, adapter code, release notes and issues;
+6. downstream BossAI website traffic only when independently measurable.
+
+A useful signal is not simply "more views". Prefer evidence that a visitor progresses deeper in the funnel: repository view → demo/code inspection → clone/star/fork → issue/feedback → BossAI commercial entry.
