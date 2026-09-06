@@ -20,7 +20,7 @@ const requiredFiles = [
   'governance/current-batch.preflight.json', 'governance/current-batch.evidence.json',
   'governance/public-source-release-candidate.v1.1.0.json',
   'governance/github-traffic-baseline-2026-09-06.json',
-  'scripts/publish-v1.1.0.ps1', 'scripts/verify-release-candidate.js', 'scripts/github-traffic-report.js'
+  'scripts/publish-v1.1.0.ps1', 'scripts/verify-release-candidate.js', 'scripts/github-traffic-report.js', 'scripts/github-traffic-compare.js'
 ];
 for (const file of requiredFiles) expect(exists(file), `Missing public-release file: ${file}`);
 
@@ -41,6 +41,7 @@ expect(/BossAI Community Source License 1\.0/.test(license), 'Root LICENSE must 
 expect(pkg.repository?.url === 'https://github.com/liufeng1976/douyin-taobao-cs.git', 'Repository URL must match the public GitHub repository.');
 expect(pkg.scripts?.demo === 'node examples/offline-demo.js', 'package.json must expose the API-free demo.');
 expect(pkg.scripts?.['growth:traffic'] === 'node scripts/github-traffic-report.js', 'package.json must expose the read-only GitHub traffic report.');
+expect(pkg.scripts?.['growth:traffic:compare'] === 'node scripts/github-traffic-compare.js', 'package.json must expose GitHub traffic snapshot comparison.');
 expect(Object.keys(pkg.dependencies || {}).length === 0, 'Hardened runtime must not reintroduce unnecessary third-party runtime dependencies.');
 expect(/API-free/i.test(readme) && /npm run demo/.test(readme), 'README must lead with the API-free runnable path.');
 expect(/没有抖音、淘宝 API 不是.*阻塞/.test(readme), 'README must say missing real APIs do not block public-source use.');

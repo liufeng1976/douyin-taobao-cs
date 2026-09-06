@@ -65,6 +65,28 @@ The report compares the current rolling 14-day GitHub traffic window against `go
 
 Measure actual GitHub traffic and downstream conversions before claiming growth impact.
 
+## Save and compare traffic snapshots
+
+Current rolling-window report:
+
+```bash
+npm run growth:traffic
+```
+
+Save a dated report inside the repository:
+
+```bash
+npm run growth:traffic -- --save governance/github-traffic-snapshot-YYYY-MM-DD.json
+```
+
+Compare two saved points:
+
+```bash
+npm run growth:traffic:compare -- governance/github-traffic-baseline-2026-09-06.json governance/github-traffic-snapshot-YYYY-MM-DD.json
+```
+
+Traffic views/clones are GitHub rolling 14-day windows, so their deltas are window differences rather than cumulative acquisition. Stars, forks and open issues are point-in-time counts and can be interpreted as cumulative count changes between snapshots.
+
 ## 2026-09-06 traffic baseline
 
 GitHub's repository traffic API reported the following rolling 14-day baseline before enough time had elapsed to attribute any lift to the v1.1.0 post-release optimization batch:

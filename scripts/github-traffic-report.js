@@ -31,6 +31,11 @@ function referrerMap(items = []) {
   return new Map(items.map((item) => [item.referrer, item]));
 }
 
+function argValue(name) {
+  const index = process.argv.indexOf(name);
+  return index >= 0 ? process.argv[index + 1] : null;
+}
+
 function main() {
   if (!fs.existsSync(BASELINE_PATH)) {
     throw new Error(`Baseline not found: ${path.relative(ROOT, BASELINE_PATH)}`);
@@ -64,6 +69,11 @@ function main() {
     popularPaths: paths,
   };
 
+  const baselineRefsForSignals = referrerMap(baseline.topReferrers);
+  const newExternalReferrers = current.topReferrers
+    .filter((item) => item.referrer !== 'github.com' && !baselineRefsForSignals.has(item.referrer))
+    .map((item) => ({ referrer: item.referrer, count: item.count, uniques: item.uniques }));
+
   const report = {
     schemaVersion: 1,
     project: 'douyin-taobao-cs',
@@ -87,7 +97,30 @@ function main() {
         openIssues: delta(current.community.openIssues, baseline.community.openIssues),
       },
     },
+    signals: {
+      firstPublicIssue: baseline.community.openIssues === 0 && current.community.openIssues > 0,
+      starsIncreased: current.community.stars > baseline.community.stars,
+      forksIncreased: current.community.forks > baseline.community.forks,
+      newExternalReferrers,
+      materialChange:
+        (baseline.community.openIssues === 0 && current.community.openIssues > 0) ||
+        current.community.stars > baseline.community.stars ||
+        current.community.forks > baseline.community.forks ||
+        newExternalReferrers.length > 0,
+    },
   };
+
+  const savePath = argValue('--save');
+  if (savePath) {
+    const absolute = path.resolve(ROOT, savePath);
+    const relative = path.relative(ROOT, absolute);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      throw new Error('--save must point inside the repository.');
+    }
+    fs.mkdirSync(path.dirname(absolute), { recursive: true });
+    fs.writeFileSync(absolute, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+    console.error(`Saved GitHub traffic report: ${relative}`);
+  }
 
   if (process.argv.includes('--json')) {
     process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
@@ -108,6 +141,18 @@ function main() {
   console.log(`Stars:       ${current.community.stars} (${signed(report.deltaFromBaseline.community.stars)})`);
   console.log(`Forks:       ${current.community.forks} (${signed(report.deltaFromBaseline.community.forks)})`);
   console.log(`Open issues: ${current.community.openIssues} (${signed(report.deltaFromBaseline.community.openIssues)})`);
+  console.log('');
+  console.log('Actionable signals');
+  if (!report.signals.materialChange) {
+    console.log('NO MATERIAL CHANGE');
+  } else {
+    if (report.signals.firstPublicIssue) console.log('- FIRST PUBLIC ISSUE DETECTED');
+    if (report.signals.starsIncreased) console.log(`- Stars increased by ${signed(report.deltaFromBaseline.community.stars)}`);
+    if (report.signals.forksIncreased) console.log(`- Forks increased by ${signed(report.deltaFromBaseline.community.forks)}`);
+    for (const item of report.signals.newExternalReferrers) {
+      console.log(`- New external referrer: ${item.referrer} (${item.count} views / ${item.uniques} uniques)`);
+    }
+  }
   console.log('');
   console.log('Top referrers');
   const baselineRefs = referrerMap(baseline.topReferrers);
