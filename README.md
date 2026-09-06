@@ -20,16 +20,22 @@
 
 如果这个项目对你有帮助，欢迎 **Star**。这会帮助更多做抖音、淘宝、千牛、电商客服和 AI 自动化的人发现它。
 
-## BossAI 生态
+## BossAI 生态：从这个 Demo 继续
 
-这个项目是 BossAI GitHub 公开项目体系中的流量入口。现有代码和使用方式保持独立，不要求迁移。
+这个项目是 BossAI GitHub 公开项目体系中的流量入口。你不需要迁移现有代码；根据下一步目标，直接选择对应公开项目：
 
-- **BossAI 官网**：https://bossaios.com
-- **BossAI 电商总管 Skill**：https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill
+| 你接下来要做什么 | BossAI 公开项目 | 适合谁 |
+| --- | --- | --- |
+| 把客服继续扩展到选品、运营、内容、销售、项目执行和人工审批 | **[BossAI Ecommerce Manager Skill](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)** | 电商运营者、AI Agent 用户 |
+| 从 Reddit / HN / GitHub Issues / ArXiv / RSS 中找真实痛点和商业机会 | **[BossAI Radar Lite](https://github.com/liufeng1976/bossai-radar-lite)** | 创业者、产品经理、市场研究 |
+| 在 Windows 本地完成文案→配音→数字人→字幕/音乐→成片 | **[BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent)** | 内容创作者、视频自动化用户 |
+| 在自己的 AI 应用里复用 Skills / Workflows / local RAG / file parsing / webhook security | **[BossAI OS Core](https://github.com/liufeng1976/bossai-os-core)** | 开发者、AI 应用团队 |
+
+- **BossAI 官网 / 商业授权入口**：https://bossaios.com
 - **当前 Community Demo Release**：https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.0.0
 - **BossAI GitHub**：https://github.com/liufeng1976
 
-如果你需要的不只是“自动回复”，而是继续覆盖选品、运营、客服、销售、内容、项目管理和人工审批，可以继续查看 BossAI 电商总管 Skill。
+如果你当前就是在做电商客服，最自然的下一步是 **BossAI Ecommerce Manager Skill**；如果你还没确定做什么产品或卖什么，则先看 **BossAI Radar Lite**；如果你已经有商品/内容主题并需要批量做视频，则直接看 **BossAI Video Agent**。
 
 ## ✨ 核心功能
 
