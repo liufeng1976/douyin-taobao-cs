@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "bossai.community-demo-release-request.v1",
+  "tag": "v1.0.0",
+  "version": "1.0.0",
+  "license": "LicenseRef-BossAI-Community-Source-1.0",
+  "sourceOnly": true,
+  "productionPlatformApiValidated": false,
+  "signedBinaryIncluded": false
+}
