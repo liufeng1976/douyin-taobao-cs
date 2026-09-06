@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - '.github/release-requests/v1.1.0.json'
+      - 'governance/public-source-release-candidate.v1.1.0.json'
+      - 'scripts/verify-release-candidate.js'
+      - '.github/workflows/v1.1-source-release.yml'
 
 permissions:
   contents: write

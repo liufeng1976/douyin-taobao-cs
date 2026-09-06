@@ -13,7 +13,7 @@
   "files": {
     "README.md": "33bf2129350fc2e7d100a9d035b4cfe52197df8cf45814236de87783b3903c4f",
     "README_EN.md": "d38022c495bc717bdd2e2459c9c4e2233d23f455847f8cf3a240dafe880404dd",
-    "LICENSE": "398f60094002b7b7fbe0dca407be9e29a75025e9aabf48a09b7b64a213c2e8bb",
+    "LICENSE": "410a59337f641f0610893bed55c5118f55b6f52f3e88e3557cc8474c36510f76",
     "package.json": "636b91bed4324894c7c0ca4e5bb78b2f2af9d6f1d82716af93d7643aeeee9f50",
     "examples/offline-demo.js": "df1e1e9815d27b90114fad3cec07c2def4050879bdf6025935cb0b4119e61f24",
     "backend/adapters/douyin.js": "eb72a5fe7a1b1b61bfedf9f7bf1a36aed8722c1f0ec80e7ac85ee9312accacbf",
@@ -23,7 +23,7 @@
     "backend/policy/responsePolicy.js": "102f82d0c98db6238937d46925754e6c26717a8f28a5f8260f830dd61e8e584a",
     "backend/services/customerServiceBridge.js": "71003696724473d90d7924fabd02e78b763052f97027c2f893972619d72098f6",
     ".github/workflows/ci.yml": "4ac23f5a30939ab53413c0dc0f23266060b956287fd74f821baa28736b669c45",
-    ".github/workflows/v1.1-source-release.yml": "e6e4af7b9334ef3038ac2ba57a4a38a893feeca9945ed779bb90b224318458a0",
+    ".github/workflows/v1.1-source-release.yml": "b6b35d32e3689d86298d359c62d9d8511b54ffe0e06d17616c6ca65e19b9c4b4",
     ".github/release-requests/v1.1.0.json": "748c6215c2ef1b9d8ecc79524e7d0cbd589bc875bde326bfd692acba8cb09d15",
     "scripts/publish-v1.1.0.ps1": "99f100948509ae6492c2b2eeb8540dddb87647673bd45de614dfa0f0c1749438",
     "CONTRIBUTING.md": "bd324c6b59d8200f3c4032400d5e512639539d971ed724387ae7b566c0771515",
