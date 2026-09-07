@@ -204,6 +204,28 @@ npm start
 
 由主产品负责品牌路由、Case、事实/知识、草稿、人工审核、History/Audit 和受治理外部执行。
 
+`backend/contracts/customerServiceIntake.js` 生成的 `bossai.customer-service-connector-envelope.v1` 示例：
+
+```json
+{
+  "schema": "bossai.customer-service-connector-envelope.v1",
+  "channel": "douyin",
+  "accountRef": "demo-douyin-store",
+  "sourceMessageId": "demo-dy-001",
+  "customerReferenceId": "demo-buyer",
+  "customerName": "Customer",
+  "subject": "Customer message",
+  "message": "这件商品什么时候发货？",
+  "receivedAt": "2026-09-06T00:00:00.000Z",
+  "intent": "GENERAL_SUPPORT",
+  "orderId": null,
+  "order": null,
+  "shipment": null
+}
+```
+
+`orderId`/`order`/`shipment` 只在渠道消息本身携带对应事实时才会被填充为最小化字段（`minimalOrderFacts`），默认为 `null`。
+
 ### 从这个项目继续进入 BossAI 生态
 
 | 你的下一步 | BossAI 项目 |
