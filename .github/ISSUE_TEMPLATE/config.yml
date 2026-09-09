@@ -3,10 +3,10 @@ contact_links:
   - name: v1.1.0 API-free Connector Release
     url: https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0
     about: Read the current source-release scope, validated local/CI baseline, and production-platform limitations.
-  - name: Continue into BossAI Ecommerce Manager
+  - name: Continue into BossAI Ecommerce Agent
     url: https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill/issues/new?template=douyin_connector_handoff.yml
-    about: Run the Ecommerce Manager demo and report the next ecommerce workflow you want to execute after the connector baseline.
-  - name: BossAI Ecommerce Manager Skill
+    about: Run the Ecommerce Agent demo and report the next ecommerce workflow you want to execute after the connector baseline.
+  - name: BossAI Ecommerce Agent
     url: https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill
     about: Continue from customer service into ecommerce operations, product research, content, sales, projects and approval-aware workflows.
   - name: BossAI product and commercial information
