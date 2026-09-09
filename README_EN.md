@@ -72,10 +72,10 @@ After `npm run demo`, use the [Community Demo Feedback](https://github.com/liufe
 
 ## BossAI ecosystem
 
-- [BossAI Ecommerce Manager Skill](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)
-- [BossAI Radar Lite](https://github.com/liufeng1976/bossai-radar-lite)
+- [BossAI Ecommerce Agent](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)
+- [BossAI Radar](https://github.com/liufeng1976/bossai-radar-lite)
 - [BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent)
-- [BossAI OS Core](https://github.com/liufeng1976/bossai-os-core)
+- [BossAI OS Open](https://github.com/liufeng1976/bossai-os-core)
 - BossAI commercial entry: <https://bossaios.com>
 
 ## Commands
