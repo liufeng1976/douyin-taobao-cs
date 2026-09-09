@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "project": "douyin-taobao-cs",
+  "version": "1.0.0",
+  "releaseType": "public-source-reference-release",
+  "generatedAt": "2026-09-06T05:40:00.000Z",
+  "positioning": "API-free-first Douyin/Taobao/Tmall/Qianniu customer-service connector reference implementation with signed webhook normalization, idempotency, human review and governed BossAI intake.",
+  "liveMarketplaceApiRequiredForRelease": false,
+  "productionMarketplaceValidationClaimed": false,
+  "requiredChecks": [
+    "npm run demo",
+    "npm run check",
+    "git diff --check"
+  ],
+  "requiredFiles": [
+    "README.md",
+    "README_EN.md",
+    "LICENSE.md",
+    "COMMERCIAL_LICENSE.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "CHANGELOG.md",
+    "NOTICE.md",
+    ".github/workflows/ci.yml",
+    ".github/workflows/release.yml",
+    ".github/dependabot.yml",
+    "examples/offline-demo.js",
+    "connectors/contracts/douyin-customer-service-inbound.v1.json",
+    "connectors/contracts/taobao-customer-service-inbound.v1.json"
+  ],
+  "keyFileSha256": {
+    "README.md": "19359361a6fc614e6285832f45a2dc9db97780e68127f6084bd68fd587e2fb26",
+    "README_EN.md": "d9c157501e3ce5cebf96da5839e471ad40f34280574c0711cf216c00f1f677f2",
+    "package.json": "82a24506ebb81a3a99139cb84a500665bee281ab256bd96dbbd5e330f8f9c80f",
+    "examples/offline-demo.js": "df1e1e9815d27b90114fad3cec07c2def4050879bdf6025935cb0b4119e61f24",
+    ".github/workflows/ci.yml": "e1676f7fc522bdffa61ca761040d85a785ceafdf051900c5e36a97d7852ba7c7",
+    ".github/workflows/release.yml": "843d618321a20ba9de7b5552660ba13f0647f931a8a3551e6a664250d7c95810",
+    "LICENSE.md": "63d2b311cdf20f5a81b20c39a9ae584cce6c13c9523a27ed9e9d37c2d3efccaf",
+    "scripts/verify-public-release.js": "34797aafb772753a0c63a827bc48bab9642540ea2ceacc69add431282dd60b03",
+    "connectors/contracts/douyin-customer-service-inbound.v1.json": "ef2ab86e128e1c44084115b8f50a3f2fa3ddd05ac689f70e3913805b9ca9b133",
+    "connectors/contracts/taobao-customer-service-inbound.v1.json": "891659a8ad93ff06ef6ac4c4f43ff5643f11ebcbb93f9c86e2aa3d67f22e9cee"
+  },
+  "publishGuard": {
+    "forcePushAllowed": false,
+    "preexistingLocalFileToPreserve": "PROJECT_FROZEN_DO_NOT_USE.md",
+    "remoteMainMustBeFetchedAndReviewedBeforePush": true,
+    "note": "Remote main was observed advancing concurrently. Merge/rebase current remote work without discarding unrelated changes, rerun checks, then push normally."
+  }
+}
