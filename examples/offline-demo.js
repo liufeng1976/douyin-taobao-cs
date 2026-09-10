@@ -78,7 +78,7 @@ if (!douyinSignatureVerified || !taobaoSignatureVerified) {
   console.log('PASS: both synthetic webhook signatures verified; no real Douyin/Taobao API, merchant credential, customer message send, refund, order mutation, or external network call was used.');
 
   heading('Next BossAI step');
-  console.log('Continue from channel/customer-service intake into governed ecommerce execution with BossAI Ecommerce Manager:');
+  console.log('Continue from channel/customer-service intake into governed ecommerce execution with BossAI Ecommerce Agent:');
   console.log('https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill');
   console.log('Run in that repository: npm test && npm run demo');
   console.log('Then share privacy-safe trial feedback here:');
