@@ -8,14 +8,14 @@
   "productionPlatformApiValidated": false,
   "sourceOnly": true,
   "forcePushAllowed": false,
-  "reviewedRemoteMain": "9a68917cb60d9387c85c493dbb03fbe40cff1975",
+  "reviewedRemoteMain": "c22bbe6c84c91db34f0cc23e23ece8b730640d97",
   "existingReleaseHistoryProtected": ["v1.0.0"],
   "files": {
     "README.md": "a4c412e2fa43c6e426bf85104ed1ea8580c19864cb2faa75624f65392e006cd3",
-    "README_EN.md": "d84713c32711f6cce43ac76e4915f13b027d24e1fb3838ef96160da4dafc7297",
+    "README_EN.md": "c08169ddb0a137f15971bb5c03f492ed3fe2075e8257082cafdf1cc8742e17cb",
     "LICENSE": "410a59337f641f0610893bed55c5118f55b6f52f3e88e3557cc8474c36510f76",
     "package.json": "f351bac0188e4d7f11fe9d0d9254adffdfde1770b9f766ec2af8ebe7cc8f4307",
-    "examples/offline-demo.js": "42f5d1f1d429f833ce3b4285fb296ed25675464d7d86e9b0101d3857aa411bc1",
+    "examples/offline-demo.js": "becbd9e916cb72f104a73333c74ddf141c846f55533de592140281b12571e0f2",
     "backend/adapters/douyin.js": "eb72a5fe7a1b1b61bfedf9f7bf1a36aed8722c1f0ec80e7ac85ee9312accacbf",
     "backend/adapters/taobao.js": "59a644fcdcb6bc9e4b75fc751f747c48dac1d7441c79d7e27e80f1afb8e474c4",
     "backend/ai/index.js": "473f7dfd3a1c6a00c101e28d12ef12039d54e8ea4bf9792c59582644a2cf5c2b",
@@ -29,6 +29,6 @@
     "CONTRIBUTING.md": "bd324c6b59d8200f3c4032400d5e512639539d971ed724387ae7b566c0771515",
     ".github/pull_request_template.md": "fef7957b2904c59af3617cc082e4fa19da21d62e9596d4c2597c52e8e22a5bf2",
     ".github/ISSUE_TEMPLATE/community_demo_feedback.yml": "9919d9d06e4f21d1f070bd767e5d699659495cf3f74ae415545499653a3c227b",
-    ".github/ISSUE_TEMPLATE/config.yml": "55915356be1b51027f2e946e35ea212c0995f1dd64b7408ac42572659234b4dc"
+    ".github/ISSUE_TEMPLATE/config.yml": "aa9259bc8dcf47a57b5072f6b2d42b5a38d3698f669933cc49b5ce0d340fc208"
   }
 }
