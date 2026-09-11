@@ -1,10 +1,18 @@
 # BossAI Douyin / Taobao Customer Service Connector
 
-An **API-free, source-available reference implementation** for Douyin Shop, Taobao, Tmall and Qianniu customer-service webhook normalization, stable idempotency, data minimization, human review and governed BossAI Customer Service intake.
+[![GitHub stars](https://img.shields.io/github/stars/liufeng1976/douyin-taobao-cs?style=social)](https://github.com/liufeng1976/douyin-taobao-cs/stargazers)
+
+An **API-free, source-available AI ecommerce customer-service connector reference** for **Douyin Shop, Taobao, Tmall and Qianniu**: signed webhooks, message normalization, stable idempotency, data minimization, human review and governed BossAI Customer Service intake.
+
+**Useful for:** AI customer service, China ecommerce integrations, Douyin/Taobao webhook adapters, human-in-the-loop support workflows, and developers evaluating BossAI without marketplace production credentials.
 
 > You do not need a real Douyin or Taobao merchant API account to clone, run, test or understand this repository.
 
 [中文 README](README.md) · [v1.1.0 Release](https://github.com/liufeng1976/douyin-taobao-cs/releases/tag/v1.1.0) · [60-second feedback / integration question](https://github.com/liufeng1976/douyin-taobao-cs/issues/new?template=community_demo_feedback.yml) · [BossAI website](https://bossaios.com)
+
+**Want to continue from customer service into product research, ecommerce operations, content, sales and approval-aware execution? → [BossAI Ecommerce Agent](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)**
+
+If this reference helps you, **Star the repo** so other Douyin/Taobao developers can find it, and open a synthetic-data Issue if you want another message field or platform pattern covered.
 
 ## Quick start
 
@@ -72,38 +80,8 @@ After `npm run demo`, use the [Community Demo Feedback](https://github.com/liufe
 
 ## BossAI ecosystem
 
-- [BossAI Ecommerce Agent](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill)
-- [BossAI Radar](https://github.com/liufeng1976/bossai-radar-lite)
-- [BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent)
-- [BossAI OS Open](https://github.com/liufeng1976/bossai-os-core)
+- [BossAI Ecommerce Agent](https://github.com/liufeng1976/bossai-ecommerce-ai-team-skill) — continue from customer service into ecommerce operations, product research, content, sales and projects.
+- [BossAI Radar](https://github.com/liufeng1976/bossai-radar-lite) — discover public pain points, leads and market opportunities.
+- [BossAI Video Agent](https://github.com/liufeng1976/bossaios-com-video-agent) — local Windows AI video production.
+- [BossAI OS Open](https://github.com/liufeng1976/bossai-os-core) — reusable BossAI skills, workflows and local-AI foundations.
 - BossAI commercial entry: <https://bossaios.com>
-
-## Commands
-
-```bash
-npm run demo
-npm test
-npm run test:e2e
-npm run verify:channel-adapter
-npm run verify:public-release
-npm run check
-```
-
-Optional real-integration diagnostics:
-
-```bash
-npm run check:production-readiness
-npm run probe:canonical-integration
-```
-
-## Version history
-
-`v1.0.0` remains immutable release history. `v1.1.0` is the current published API-free connector hardening release.
-
-## License
-
-This repository remains under the **BossAI Community Source License 1.0** in [`LICENSE`](LICENSE).
-
-It is source-available, not OSI Open Source. Personal, educational, research, evaluation and other non-commercial uses are licensed subject to the license terms. Commercial operation, client delivery, SaaS, white-label/OEM and other commercial use require BossAI authorization.
-
-If this reference helps your work, star the repository and open issues using synthetic data only. Never post real merchant secrets, tokens or customer PII.
