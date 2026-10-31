@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 3,
+  "project": "douyin-taobao-cs",
+  "batch": "external-distribution-preparation-2026-09-06",
+  "highestCommercialGoal": "Increase qualified external discovery of the runnable API-free connector reference and route suitable users toward BossAI Ecommerce Manager without spam or unsupported claims.",
+  "largestUserGap": "GitHub internal discovery dominates traffic while external referrers and public feedback remain minimal.",
+  "userProblem": "Developers and ecommerce operators outside GitHub search need a truthful, low-friction way to discover and evaluate the connector reference.",
+  "userVisibleChange": "A governed distribution plan prepares compliant Show HN and r/selfhosted Megathread copy while explicitly excluding channels whose rules prohibit direct promotion.",
+  "scope": [
+    "current community-rule research",
+    "Show HN publication draft",
+    "r/selfhosted New Project Megathread draft",
+    "r/ecommerce no-go decision",
+    "truth-boundary checklist",
+    "measurement protocol"
+  ],
+  "outOfScope": [
+    "automatic external publication",
+    "Reddit/Hacker News account actions",
+    "vote solicitation",
+    "mass posting or cross-post spam",
+    "claims of live marketplace production validation",
+    "claims of traffic, lead or revenue causation before evidence"
+  ],
+  "capabilityClassification": "growth-preparation-and-measurement",
+  "realEntryAcceptance": [
+    "distribution plan names explicit GO/CONDITIONAL/NO-GO channels",
+    "source-available licensing is stated truthfully",
+    "no live marketplace production API claim is introduced",
+    "human approval is required before each external publication",
+    "measurement protocol uses the existing GitHub Traffic snapshots"
+  ],
+  "machineChecks": [
+    "npm run verify:public-release",
+    "git diff --check"
+  ],
+  "targetCompletionLevel": 2,
+  "completionClaim": "External distribution package prepared and locally verified; no external community post has been published by this batch."
+}

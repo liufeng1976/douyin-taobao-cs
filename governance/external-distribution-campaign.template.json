@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "project": "douyin-taobao-cs",
+  "campaignId": "replace-me",
+  "status": "draft",
+  "channel": "show-hn-or-reddit-selfhosted-megathread",
+  "approvedBy": null,
+  "approvedAt": null,
+  "publishedAt": null,
+  "publicUrl": null,
+  "titleOrLead": null,
+  "sourceSnapshot": null,
+  "followupSnapshot": null,
+  "truthBoundary": {
+    "sourceAvailableNotOsiOpenSource": true,
+    "productionPlatformApiValidated": false,
+    "automaticCustomerSend": false,
+    "externalBusinessMutation": false
+  },
+  "observedOutcome": {
+    "newReferrerObserved": null,
+    "uniqueClonerWindowDifference": null,
+    "starsDifference": null,
+    "forksDifference": null,
+    "openIssuesDifference": null,
+    "notes": null
+  },
+  "causationClaimAllowed": false
+}
